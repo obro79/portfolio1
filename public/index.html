@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owen Fisher · Developer Portfolio</title>
+  <meta name="description" content="Full-stack developer portfolio for Owen Fisher showcasing selected projects, experience, and contact information." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="module" src="./assets/main.js" defer></script>
+</head>
+<body class="theme-dark">
+  <div class="backdrop-layers" aria-hidden="true">
+    <span class="orb orb-primary"></span>
+    <span class="orb orb-secondary"></span>
+    <span class="noise"></span>
+  </div>
+
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav">
+        <a href="#top" class="brand" aria-label="Owen Fisher home">
+          <span class="brand-mark">OF</span>
+          <span class="brand-text">Owen Fisher</span>
+        </a>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu">
+          <span class="sr-only">Toggle navigation</span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="nav-menu" id="nav-menu">
+          <a href="#experience" class="nav-link">Experience</a>
+          <a href="#projects" class="nav-link">Projects</a>
+          <a href="#contact" class="nav-link">Contact</a>
+          <button class="theme-toggle" type="button" aria-label="Toggle theme">
+            <span class="theme-icon theme-icon--sun" aria-hidden="true"></span>
+            <span class="theme-icon theme-icon--moon" aria-hidden="true"></span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" data-animate>
+      <div class="container hero-content">
+        <div class="hero-text">
+          <p class="eyebrow">Full-Stack Developer</p>
+          <h1>Building elegant web experiences.</h1>
+          <p class="lead">
+            Transforming ideas into clean, functional software.
+          </p>
+          <div class="hero-actions">
+            <a href="#projects" class="btn btn-primary">View Projects</a>
+            <a href="#contact" class="btn btn-ghost">Get in touch</a>
+          </div>
+        </div>
+        <div class="hero-visual" data-animate>
+          <div class="hero-card">
+            <div class="hero-avatar" role="img" aria-label="Illustrated portrait of Owen Fisher"></div>
+            <h2>Owen Fisher</h2>
+            <p>Full-stack developer specializing in TypeScript and React.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section experience" id="experience" data-animate>
+      <div class="container">
+        <header class="section-header">
+          <p class="eyebrow">Experience</p>
+          <h2>Professional background.</h2>
+        </header>
+        <div class="timeline">
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <p class="timeline-period">Sept. 2025 — Present</p>
+              <p class="timeline-company">Royal Bank of Canada</p>
+            </div>
+            <div class="timeline-content">
+              <h3>Quantitative Developer</h3>
+              <ul>
+                <li>Optimized risk assessment by migrating pricing engine from MATLAB to Python + Dask, deploying scalable pipelines that sped up valuations 70% and cut maintenance 50%+, while improving release cadence via CI/CD</li>
+                <li>Created comprehensive onboarding documentation using Confluence with annotated screenshots and troubleshooting guides, cutting onboarding time by 50% and reducing senior support through self service learning</li>
+              </ul>
+            </div>
+          </article>
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <p class="timeline-period">Jan. 2025 — May 2025</p>
+              <p class="timeline-company">Quantico Research</p>
+            </div>
+            <div class="timeline-content">
+              <h3>Quantitative Developer</h3>
+              <ul>
+                <li>Led development of a Hidden Markov Model in Stan with a Python/NumPy interface, which established the first real-time seismic risk adjustment framework and slashed seismic risk exposure by 80%</li>
+                <li>Designed and implemented real-time seismic data pipelines in Python using NumPy for vectorized data cleaning, which accelerated downstream model responsiveness by 60% and enabled near real-time risk detection</li>
+                <li>Automated walk-forward validation and stress testing with PyTest inside a CI/CD pipeline, making model releases fully reproducible and cutting QA while boosting release cadence by 3x</li>
+              </ul>
+            </div>
+          </article>
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <p class="timeline-period">June 2025 — Present</p>
+              <p class="timeline-company">UBC Science Undergraduate Society</p>
+            </div>
+            <div class="timeline-content">
+              <h3>Frontend Developer</h3>
+              <ul>
+                <li>Redesigned the Science Undergraduate Society website by implementing 5+ new pages and features (room bookings, clubs, events), improving accessibility for 55,000+ undergraduates</li>
+                <li>Engineered 10+ reusable components and introduced 15+ design tokens in Next.js/TypeScript, ensuring consistency across the site and reducing long-term maintenance effort by 50%</li>
+                <li>Collaborated with designers to translate 20+ Figma wireframes into production-ready code, delivering a modernized interface that increased event page traffic by 40%</li>
+              </ul>
+            </div>
+          </article>
+          <article class="timeline-item">
+            <div class="timeline-meta">
+              <p class="timeline-period">May 2025 — Present</p>
+              <p class="timeline-company">UBC Actuarial Science Club</p>
+            </div>
+            <div class="timeline-content">
+              <h3>Frontend Engineer</h3>
+              <ul>
+                <li>Built the site with Next.js, React, and Tailwind CSS, adding responsive design and event registration that increased member sign-ups by 200% and doubled monthly engagement</li>
+                <li>Led planning and development of the club's first website, delegating tasks to a developer and UI/UX designer while coordinating code reviews and merges</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section projects" id="projects" data-animate>
+      <div class="container">
+        <header class="section-header">
+          <p class="eyebrow">Selected Work</p>
+          <h2>Recent projects.</h2>
+          <div class="project-filters" role="tablist" aria-label="Project categories">
+            <button class="filter-btn is-active" data-filter="all" role="tab" aria-selected="true">All</button>
+            <button class="filter-btn" data-filter="product" role="tab" aria-selected="false">Product</button>
+            <button class="filter-btn" data-filter="ui" role="tab" aria-selected="false">UI</button>
+            <button class="filter-btn" data-filter="ai" role="tab" aria-selected="false">AI</button>
+          </div>
+        </header>
+        <div class="project-grid">
+          <article class="project-card" data-category="product" data-animate>
+            <div class="project-image" style="background: linear-gradient(135deg, rgba(124, 108, 255, 0.3), rgba(59, 201, 255, 0.3));"></div>
+            <div class="project-content">
+              <div class="project-meta">
+                <span class="badge">Platform</span>
+                <span class="project-year">2023</span>
+              </div>
+              <h3>Aurora Command Center</h3>
+              <p>Operations dashboard for distributed energy grids with real-time monitoring.</p>
+              <div class="project-footer">
+                <div class="tags">
+                  <span>TypeScript</span><span>React</span><span>GraphQL</span><span>AWS</span>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="project-card" data-category="ui" data-animate>
+            <div class="project-image" style="background: linear-gradient(135deg, rgba(255, 107, 170, 0.3), rgba(124, 108, 255, 0.3));"></div>
+            <div class="project-content">
+              <div class="project-meta">
+                <span class="badge">Design System</span>
+                <span class="project-year">2022</span>
+              </div>
+              <h3>Atlas Design Language</h3>
+              <p>Component library and design system for 12 product lines.</p>
+              <div class="project-footer">
+                <div class="tags">
+                  <span>Storybook</span><span>Figma</span><span>Typescript</span><span>Testing Library</span>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="project-card" data-category="ai" data-animate>
+            <div class="project-image" style="background: linear-gradient(135deg, rgba(59, 201, 255, 0.3), rgba(107, 255, 193, 0.3));"></div>
+            <div class="project-content">
+              <div class="project-meta">
+                <span class="badge">AI</span>
+                <span class="project-year">2024</span>
+              </div>
+              <h3>Pulse Insights Platform</h3>
+              <p>AI research assistant for analyzing qualitative user feedback.</p>
+              <div class="project-footer">
+                <div class="tags">
+                  <span>Next.js</span><span>LangChain</span><span>Supabase</span><span>Tailwind</span>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="project-card" data-category="product" data-animate>
+            <div class="project-image" style="background: linear-gradient(135deg, rgba(255, 193, 107, 0.3), rgba(255, 107, 170, 0.3));"></div>
+            <div class="project-content">
+              <div class="project-meta">
+                <span class="badge">Platform</span>
+                <span class="project-year">2021</span>
+              </div>
+              <h3>CodeSphere Studio</h3>
+              <p>Collaborative development environment with live pair programming.</p>
+              <div class="project-footer">
+                <div class="tags">
+                  <span>Node.js</span><span>WebRTC</span><span>Kubernetes</span><span>Postgres</span>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact" id="contact" data-animate>
+      <div class="container">
+        <header class="section-header">
+          <p class="eyebrow">Contact</p>
+          <h2>Let's work together.</h2>
+        </header>
+        <p>
+          Available for freelance projects and consulting.
+        </p>
+        <div class="contact-actions">
+          <a href="mailto:hello@owenfisher.dev" class="btn btn-primary">hello@owenfisher.dev</a>
+          <button class="btn btn-ghost copy-email" data-email="hello@owenfisher.dev">Copy email</button>
+        </div>
+        <ul class="social-links">
+          <li><a href="https://github.com/owenfisher" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://www.linkedin.com/in/owenfisher" target="_blank" rel="noopener">LinkedIn</a></li>
+        </ul>
+        <p class="form-status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Owen Fisher</p>
+      <div class="footer-links">
+        <a href="#top">Back to top</a>
+        <a href="mailto:hello@owenfisher.dev">Email</a>
+        <a href="https://github.com/owenfisher" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

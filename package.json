@@ -1,0 +1,16 @@
+{
+  "name": "untitled9",
+  "version": "1.0.0",
+  "description": "",
+  "main": "public/assets/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "serve public -l 3000"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "serve": "^14.2.1",
+    "typescript": "^5.5.3"
+  },
+  "private": true
+}
