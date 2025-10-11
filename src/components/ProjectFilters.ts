@@ -30,8 +30,8 @@ export class ProjectFilters {
 
   private filterProjects(category: string): void {
     this.projectCards.forEach((card) => {
-      const cardCategory = card.dataset.category ?? 'all';
-      const isVisible = category === 'all' || cardCategory === category;
+      const cardCategories = card.dataset.category?.split(' ') ?? [];
+      const isVisible = category === 'all' || cardCategories.includes(category);
       card.classList.toggle('is-hidden', !isVisible);
     });
   }
