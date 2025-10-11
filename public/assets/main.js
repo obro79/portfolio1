@@ -4,6 +4,7 @@ import { ProjectFilters } from './components/ProjectFilters.js';
 import { ContactForm } from './components/ContactForm.js';
 import { Animations } from './components/Animations.js';
 import { FooterYear } from './components/FooterYear.js';
+import { ParticleBackground } from './components/ParticleBackground.js';
 const init = () => {
     const navigation = new Navigation();
     const themeToggle = new ThemeToggle();
@@ -11,11 +12,13 @@ const init = () => {
     const contactForm = new ContactForm();
     const animations = new Animations();
     const footerYear = new FooterYear();
+    const particleBackground = new ParticleBackground();
     navigation.init();
     themeToggle.init();
     projectFilters.init();
     contactForm.init();
     animations.init();
     footerYear.init();
+    particleBackground.init();
 };
 window.addEventListener('DOMContentLoaded', init);
