@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Navigation from '../src/components/Navigation';
 import Animations from '../src/components/Animations';
 import ParticleBackground from '../src/components/ParticleBackground';
-import ProjectFilters from '../src/components/ProjectFilters';
+import ProjectsSection from '../src/components/ProjectsSection';
 import ContactForm from '../src/components/ContactForm';
 import FooterYear from '../src/components/FooterYear';
 
@@ -119,60 +119,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section projects" id="projects" data-animate>
-          <div className="container">
-            <header className="section-header">
-              <p className="eyebrow">Selected Work</p>
-              <h2>Technical projects.</h2>
-              <ProjectFilters />
-            </header>
-            <div className="project-grid">
-              <article className="project-card" data-category="highlighted personal" data-animate>
-                <div className="project-image" style={{background: 'linear-gradient(135deg, rgba(124, 108, 255, 0.3), rgba(59, 201, 255, 0.3))'}}></div>
-                <div className="project-content">
-                  <div className="project-header">
-                    <h3>PrepMe</h3>
-                    <span className="project-year">May 2025</span>
-                  </div>
-                  <p>Built AI voice interviewer with real-time speech, transcripts, and 100 Lighthouse accessibility score.</p>
-                  <div className="project-footer">
-                    <a href="https://github.com/obro79/mock_interview_ai" target="_blank" rel="noopener" className="text-link">GitHub</a>
-                    <a href="https://mock-interview-ai-git-main-owens-projects-e5b63a60.vercel.app/sign-in" target="_blank" rel="noopener" className="text-link">Live Demo</a>
-                  </div>
-                </div>
-              </article>
-              <article className="project-card" data-category="highlighted personal" data-animate>
-                <div className="project-image" style={{background: 'linear-gradient(135deg, rgba(255, 107, 170, 0.3), rgba(124, 108, 255, 0.3))'}}></div>
-                <div className="project-content">
-                  <div className="project-header">
-                    <h3>Financely</h3>
-                    <span className="project-year">June 2025</span>
-                  </div>
-                  <p>Configured Vercel CI/CD pipeline to auto-build/test/deploy, cutting manual release steps 75%. Built ETL services in Python/Node to load transactions into SQL.</p>
-                  <div className="project-footer">
-                    <a href="https://github.com/obro79/financely" target="_blank" rel="noopener" className="text-link">GitHub</a>
-                    <a href="https://financely-nine.vercel.app/sign-in" target="_blank" rel="noopener" className="text-link">Live Demo</a>
-                    <a href="https://noisy-pansy-2e8.notion.site/Financely-1eab9c27045980579544ce5e4f96ed55" target="_blank" rel="noopener" className="text-link">Docs</a>
-                  </div>
-                </div>
-              </article>
-              <article className="project-card" data-category="highlighted personal" data-animate>
-                <div className="project-image" style={{background: 'linear-gradient(135deg, rgba(59, 201, 255, 0.3), rgba(107, 255, 193, 0.3))'}}></div>
-                <div className="project-content">
-                  <div className="project-header">
-                    <h3>Option Pricing & Portfolio Management Web App</h3>
-                    <span className="project-year">Sept. 2025</span>
-                  </div>
-                  <p>Implemented Black-Scholes and Monte Carlo pricing models with 4x faster vectorized loops. Delivered interactive portfolio dashboards surfacing pricing results, portfolio metrics, and risk attribution.</p>
-                  <div className="project-footer">
-                    <a href="https://github.com/obro79/optionStrategyApp" target="_blank" rel="noopener" className="text-link">GitHub</a>
-                    <a href="https://optitrade.streamlit.app" target="_blank" rel="noopener" className="text-link">Live Demo</a>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
+        <ProjectsSection />
 
         <section className="section contact" id="contact" data-animate>
           <div className="container">
