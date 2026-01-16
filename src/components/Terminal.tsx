@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { fileSystem, resolvePath, getNode, listDirectory, FileSystemNode } from '../data/filesystem';
 import { projects, Project } from '../data/projects';
 import StackBlitzEmbed from './StackBlitzEmbed';
@@ -28,7 +28,7 @@ Type 'help' to see everything you can do here.
 `;
 
 // Helper function to convert URLs in text to clickable links
-function linkifyText(text: string): (string | JSX.Element)[] {
+function linkifyText(text: string): (string | React.ReactElement)[] {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const parts = text.split(urlRegex);
 
