@@ -1,10 +1,6 @@
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
-import dynamic from 'next/dynamic';
 import { fileSystem, resolvePath, getNode, listDirectory, FileSystemNode } from '../data/filesystem';
 import { projects, Project } from '../data/projects';
-
-// Dynamic import to prevent SSR issues with StackBlitz
-const StackBlitzEmbed = dynamic(() => import('./StackBlitzEmbed'), { ssr: false });
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error' | 'success' | 'ascii';
@@ -68,7 +64,7 @@ PORTFOLIO
   mailto        Open email client
 
 RUN PROJECTS (cd into projects/<name> first)
-  npm run dev   Launch project in StackBlitz IDE
+  npm run dev   Open live demo
   npm install   Install dependencies
   nrd           Shortcut for npm run dev
 
@@ -108,7 +104,6 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [stackblitzProject, setStackblitzProject] = useState<Project | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
@@ -180,32 +175,22 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
       return;
     }
 
-    if (!project.stackblitz) {
-      // No StackBlitz config, open demo URL if available
-      if (project.links.demo) {
-        addLine('output', `> ${project.title}@1.0.0 dev`);
-        addLine('output', '> next dev');
-        addLine('output', '');
-        addLine('success', `Starting development server...`);
-        addLine('output', `Opening ${project.links.demo}`);
-        window.open(project.links.demo, '_blank');
-      } else {
-        addLine('error', `npm ERR! No dev server configured for ${project.title}`);
-        addLine('output', 'Try: cat README.md for more information');
-      }
-      return;
+    if (project.links.demo) {
+      addLine('output', `> ${project.title}@1.0.0 dev`);
+      addLine('output', '> next dev');
+      addLine('output', '');
+      addLine('success', 'Starting development server...');
+      addLine('output', `Opening ${project.links.demo}`);
+      window.open(project.links.demo, '_blank');
+    } else if (project.links.github) {
+      addLine('output', `> ${project.title}@1.0.0 dev`);
+      addLine('output', '');
+      addLine('output', 'No live demo available. Opening GitHub repo...');
+      window.open(project.links.github, '_blank');
+    } else {
+      addLine('error', `npm ERR! No dev server configured for ${project.title}`);
+      addLine('output', 'Try: cat README.md for more information');
     }
-
-    // Has StackBlitz config - launch embedded IDE
-    addLine('output', `> ${project.title}@1.0.0 dev`);
-    addLine('output', '> next dev');
-    addLine('output', '');
-    addLine('success', 'Launching StackBlitz development environment...');
-
-    // Small delay for visual feedback
-    setTimeout(() => {
-      setStackblitzProject(project);
-    }, 300);
   };
 
   // Build tree output for directory
@@ -611,18 +596,6 @@ nothing to commit, working tree clean
   const handleContainerClick = () => {
     inputRef.current?.focus();
   };
-
-  // Render StackBlitz if active
-  if (stackblitzProject && stackblitzProject.stackblitz) {
-    return (
-      <StackBlitzEmbed
-        repo={stackblitzProject.stackblitz.repo}
-        openFile={stackblitzProject.stackblitz.openFile}
-        startScript={stackblitzProject.stackblitz.startScript}
-        onClose={() => setStackblitzProject(null)}
-      />
-    );
-  }
 
   return (
     <div
