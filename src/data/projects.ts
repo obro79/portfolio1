@@ -12,6 +12,12 @@ export interface Project {
     video?: string;
     docs?: string;
   };
+  // StackBlitz config for runnable projects
+  stackblitz?: {
+    repo: string; // GitHub owner/repo
+    openFile?: string; // File to open by default
+    startScript?: string; // npm script to run (default: dev)
+  };
 }
 
 export const projects: Project[] = [
@@ -25,6 +31,10 @@ export const projects: Project[] = [
     links: {
       github: 'https://github.com/obro79/mock_interview_ai',
       demo: 'https://mock-interview-ai-git-main-owens-projects-e5b63a60.vercel.app/sign-in'
+    },
+    stackblitz: {
+      repo: 'obro79/mock_interview_ai',
+      openFile: 'src/app/page.tsx'
     }
   },
   {
@@ -38,6 +48,10 @@ export const projects: Project[] = [
       github: 'https://github.com/obro79/financely',
       demo: 'https://financely-nine.vercel.app/sign-in',
       docs: 'https://noisy-pansy-2e8.notion.site/Financely-1eab9c27045980579544ce5e4f96ed55'
+    },
+    stackblitz: {
+      repo: 'obro79/financely',
+      openFile: 'src/app/page.tsx'
     }
   },
   {
@@ -52,6 +66,10 @@ export const projects: Project[] = [
       demo: 'https://stormhacks-three.vercel.app',
       video: 'https://youtu.be/RmVdUAm20Ms',
       devpost: 'https://devpost.com/software/echome-ixe6qy'
+    },
+    stackblitz: {
+      repo: 'obro79/stormhacks',
+      openFile: 'src/app/page.tsx'
     }
   },
   {
