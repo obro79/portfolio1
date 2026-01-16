@@ -1,7 +1,10 @@
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import dynamic from 'next/dynamic';
 import { fileSystem, resolvePath, getNode, listDirectory, FileSystemNode } from '../data/filesystem';
 import { projects, Project } from '../data/projects';
-import StackBlitzEmbed from './StackBlitzEmbed';
+
+// Dynamic import to prevent SSR issues with StackBlitz
+const StackBlitzEmbed = dynamic(() => import('./StackBlitzEmbed'), { ssr: false });
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error' | 'success' | 'ascii';
