@@ -1,0 +1,691 @@
+import { useState, useRef, useEffect, KeyboardEvent } from 'react';
+import { fileSystem, resolvePath, getNode, listDirectory, FileSystemNode } from '../data/filesystem';
+import { projects, Project } from '../data/projects';
+import StackBlitzEmbed from './StackBlitzEmbed';
+
+interface TerminalLine {
+  type: 'input' | 'output' | 'error' | 'success' | 'ascii';
+  content: string;
+}
+
+const ASCII_NAME = ` ██████╗ ██╗    ██╗███████╗███╗   ██╗
+██╔═══██╗██║    ██║██╔════╝████╗  ██║
+██║   ██║██║ █╗ ██║█████╗  ██╔██╗ ██║
+██║   ██║██║███╗██║██╔══╝  ██║╚██╗██║
+╚██████╔╝╚███╔███╔╝███████╗██║ ╚████║
+ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝`;
+
+const WELCOME_TEXT = `
+Welcome to Owen Fisher's interactive terminal portfolio.
+
+Quick start:
+  help              See ALL commands
+  ls                Explore files
+  cd projects       Browse my work
+  npm run dev       Run a project live
+
+Type 'help' to see everything you can do here.
+`;
+
+// Helper function to convert URLs in text to clickable links
+function linkifyText(text: string): (string | JSX.Element)[] {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const parts = text.split(urlRegex);
+
+  return parts.map((part, index) => {
+    if (part.match(urlRegex)) {
+      return (
+        <a
+          key={index}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          style={{ color: 'var(--accent)' }}
+        >
+          {part}
+        </a>
+      );
+    }
+    return part;
+  });
+}
+
+const HELP_TEXT = `
+NAVIGATION
+  ls [dir]      List directory contents
+  cd <dir>      Change directory
+  cat <file>    Display file contents
+  pwd           Print working directory
+  tree [dir]    Display directory tree
+
+PORTFOLIO
+  whoami        About me
+  contact       Contact information
+  mailto        Open email client
+
+RUN PROJECTS (cd into projects/<name> first)
+  npm run dev   Launch project in StackBlitz IDE
+  npm install   Install dependencies
+  nrd           Shortcut for npm run dev
+
+DEVELOPER TOOLS
+  neofetch      System info
+  git status    Check repo status
+  git blame     Who wrote this?
+  fortune       Programming wisdom
+  history       Command history
+
+TRY THESE
+  cowsay <msg>  sl  coffee  vim  rm -rf /
+  fortune  git blame  sudo hire-owen
+
+SHORTCUTS
+  Tab           Autocomplete
+  Up/Down       Command history
+  Ctrl+L        Clear screen
+  Ctrl+C        Cancel input
+  clear         Clear terminal
+
+Try: cd projects/prepme && npm run dev
+`;
+
+interface TerminalViewProps {
+  onClose?: () => void;
+}
+
+export default function TerminalView({ onClose }: TerminalViewProps) {
+  const [lines, setLines] = useState<TerminalLine[]>([
+    { type: 'ascii', content: ASCII_NAME },
+    { type: 'output', content: WELCOME_TEXT }
+  ]);
+  const [currentInput, setCurrentInput] = useState('');
+  const [currentDir, setCurrentDir] = useState<string[]>([]);
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
+  const [stackblitzProject, setStackblitzProject] = useState<Project | null>(null);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const outputRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement && containerRef.current) {
+      containerRef.current.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch(() => {
+        // Fallback: just maximize the container
+        setIsFullscreen(!isFullscreen);
+      });
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+      });
+    } else {
+      setIsFullscreen(!isFullscreen);
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
+  const handleMinimize = () => {
+    setIsMinimized(!isMinimized);
+  };
+
+  useEffect(() => {
+    if (outputRef.current) {
+      outputRef.current.scrollTop = outputRef.current.scrollHeight;
+    }
+  }, [lines]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const getPrompt = () => {
+    const path = currentDir.length === 0 ? '~' : '~/' + currentDir.join('/');
+    return `visitor@owenfisher.dev:${path}$ `;
+  };
+
+  const addLine = (type: TerminalLine['type'], content: string) => {
+    setLines(prev => [...prev, { type, content }]);
+  };
+
+  // Get project from current directory
+  const getCurrentProject = (): Project | null => {
+    // Check if we're in a project directory: projects/<project-id>
+    if (currentDir[0] === 'projects' && currentDir.length >= 2) {
+      const projectId = currentDir[1];
+      return projects.find(p => p.id === projectId) || null;
+    }
+    return null;
+  };
+
+  // Handle npm run dev command
+  const handleNpmRunDev = () => {
+    const project = getCurrentProject();
+
+    if (!project) {
+      addLine('error', 'npm ERR! Missing script: "dev"');
+      addLine('error', 'npm ERR! Navigate to a project directory first: cd projects/<project-name>');
+      return;
+    }
+
+    if (!project.stackblitz) {
+      // No StackBlitz config, open demo URL if available
+      if (project.links.demo) {
+        addLine('output', `> ${project.title}@1.0.0 dev`);
+        addLine('output', '> next dev');
+        addLine('output', '');
+        addLine('success', `Starting development server...`);
+        addLine('output', `Opening ${project.links.demo}`);
+        window.open(project.links.demo, '_blank');
+      } else {
+        addLine('error', `npm ERR! No dev server configured for ${project.title}`);
+        addLine('output', 'Try: cat README.md for more information');
+      }
+      return;
+    }
+
+    // Has StackBlitz config - launch embedded IDE
+    addLine('output', `> ${project.title}@1.0.0 dev`);
+    addLine('output', '> next dev');
+    addLine('output', '');
+    addLine('success', 'Launching StackBlitz development environment...');
+
+    // Small delay for visual feedback
+    setTimeout(() => {
+      setStackblitzProject(project);
+    }, 300);
+  };
+
+  // Build tree output for directory
+  const buildTree = (node: FileSystemNode, name: string, prefix: string = '', isLast: boolean = true): string => {
+    let result = prefix + (prefix ? (isLast ? '└── ' : '├── ') : '') + name;
+
+    if (node.type === 'directory' && node.children) {
+      result += '/';
+      const children = Object.entries(node.children);
+      children.forEach(([childName, childNode], index) => {
+        const isLastChild = index === children.length - 1;
+        const newPrefix = prefix + (prefix ? (isLast ? '    ' : '│   ') : '');
+        result += '\n' + buildTree(childNode, childName, newPrefix, isLastChild);
+      });
+    }
+
+    return result;
+  };
+
+  const executeCommand = (input: string) => {
+    const trimmed = input.trim();
+    if (!trimmed) return;
+
+    // Add to history
+    setHistory(prev => [...prev, trimmed]);
+    setHistoryIndex(-1);
+
+    // Show the command
+    addLine('input', getPrompt() + trimmed);
+
+    // Parse command
+    const parts = trimmed.split(/\s+/);
+    const cmd = parts[0].toLowerCase();
+    const args = parts.slice(1);
+
+    switch (cmd) {
+      case 'help':
+        addLine('output', HELP_TEXT);
+        break;
+
+      case 'clear':
+        setLines([]);
+        break;
+
+      case 'pwd':
+        addLine('output', '/' + (currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')));
+        break;
+
+      case 'ls': {
+        const targetPath = args[0] ? resolvePath(args[0], currentDir) : currentDir;
+        const items = listDirectory(targetPath);
+        if (items.length === 0) {
+          const node = getNode(targetPath);
+          if (!node) {
+            addLine('error', `ls: cannot access '${args[0] || '.'}': No such file or directory`);
+          } else if (node.type === 'file') {
+            addLine('output', node.name);
+          } else {
+            addLine('output', '(empty directory)');
+          }
+        } else {
+          const formatted = items.map(item => {
+            const node = getNode([...targetPath, item]);
+            return node?.type === 'directory' ? `\x1b[36m${item}/\x1b[0m` : item;
+          });
+          // Simple formatting - show as directory listing
+          const output = items.map(item => {
+            const node = getNode([...targetPath, item]);
+            return node?.type === 'directory' ? item + '/' : item;
+          }).join('  ');
+          addLine('output', output);
+        }
+        break;
+      }
+
+      case 'cd': {
+        if (!args[0] || args[0] === '~') {
+          setCurrentDir([]);
+          break;
+        }
+        const newPath = resolvePath(args[0], currentDir);
+        const node = getNode(newPath);
+        if (!node) {
+          addLine('error', `cd: no such file or directory: ${args[0]}`);
+        } else if (node.type !== 'directory') {
+          addLine('error', `cd: not a directory: ${args[0]}`);
+        } else {
+          setCurrentDir(newPath);
+        }
+        break;
+      }
+
+      case 'cat': {
+        if (!args[0]) {
+          addLine('error', 'cat: missing file operand');
+          break;
+        }
+        const filePath = resolvePath(args[0], currentDir);
+        const node = getNode(filePath);
+        if (!node) {
+          addLine('error', `cat: ${args[0]}: No such file or directory`);
+        } else if (node.type === 'directory') {
+          addLine('error', `cat: ${args[0]}: Is a directory`);
+        } else if (node.content) {
+          addLine('output', node.content);
+        }
+        break;
+      }
+
+      case 'whoami':
+        const aboutNode = getNode(['about.txt']);
+        if (aboutNode?.content) {
+          addLine('output', aboutNode.content);
+        }
+        break;
+
+      case 'contact':
+        const contactNode = getNode(['contact.txt']);
+        if (contactNode?.content) {
+          addLine('output', contactNode.content);
+        }
+        break;
+
+      case 'mailto':
+        window.open('mailto:owenfisher46@gmail.com', '_blank');
+        addLine('success', 'Opening email client...');
+        break;
+
+      case 'sudo':
+        if (args.join(' ').toLowerCase() === 'hire-owen') {
+          addLine('success', `
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║   🎉 ACCESS GRANTED 🎉                                         ║
+║                                                               ║
+║   Congratulations! You've discovered the secret command.      ║
+║                                                               ║
+║   Owen would love to work with you.                           ║
+║   Email: owenfisher46@gmail.com                               ║
+║   LinkedIn: linkedin.com/in/fisherowen                        ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+`);
+        } else {
+          addLine('error', `sudo: ${args[0]}: command not found`);
+        }
+        break;
+
+      case 'echo':
+        addLine('output', args.join(' '));
+        break;
+
+      case 'date':
+        addLine('output', new Date().toString());
+        break;
+
+      case 'neofetch':
+        addLine('output', `
+        .--.         visitor@owenfisher.dev
+       |o_o |        -----------------------
+       |:_/ |        OS: Portfolio OS v1.0
+      //   \\ \\       Host: owenfisher.dev
+     (|     | )      Kernel: Next.js 15.5.4
+    /'\\_   _/\`\\      Shell: terminal.tsx
+    \\___)=(___/      Theme: Cyan Terminal
+
+                     Uptime: Since 2025
+                     Projects: 7
+                     Languages: TypeScript, Python, Java
+`);
+        break;
+
+      case 'npm': {
+        // Handle npm commands
+        const npmCmd = args.join(' ').toLowerCase();
+        if (npmCmd === 'run dev' || npmCmd === 'start') {
+          handleNpmRunDev();
+        } else if (npmCmd === 'install' || npmCmd === 'i') {
+          addLine('output', 'Installing dependencies...');
+          setTimeout(() => {
+            addLine('success', `
+added 847 packages in 3.2s
+
+142 packages are looking for funding
+  run \`npm fund\` for details
+`);
+          }, 500);
+        } else {
+          addLine('error', `npm: unknown command "${args[0]}"`);
+        }
+        break;
+      }
+
+      case 'nrd': {
+        // Shortcut for npm run dev
+        handleNpmRunDev();
+        break;
+      }
+
+      case 'history': {
+        const historyOutput = history.map((cmd, i) => `  ${i + 1}  ${cmd}`).join('\n');
+        addLine('output', historyOutput || '(no command history)');
+        break;
+      }
+
+      case 'tree': {
+        const targetPath = args[0] ? resolvePath(args[0], currentDir) : currentDir;
+        const targetNode = getNode(targetPath);
+        if (!targetNode) {
+          addLine('error', `tree: ${args[0] || '.'}: No such directory`);
+        } else if (targetNode.type !== 'directory') {
+          addLine('error', `tree: ${args[0]}: Not a directory`);
+        } else {
+          const treeName = targetPath.length === 0 ? '.' : targetPath[targetPath.length - 1];
+          addLine('output', buildTree(targetNode, treeName));
+        }
+        break;
+      }
+
+      // Easter eggs
+      case 'vim':
+      case 'vi':
+      case 'nano':
+        addLine('output', `
+~
+~
+~                    VIM - Vi IMproved
+~
+~                    You're now stuck in vim!
+~                    Press :q to escape... or try
+~                    :q!  :wq  :x  ZZ  (just kidding)
+~
+~                    Type 'exit' to return to safety.
+~
+`);
+        break;
+
+      case 'exit':
+        addLine('success', 'Phew! You escaped vim. You\'re a true developer now.');
+        break;
+
+      case 'cowsay': {
+        const message = args.join(' ') || 'Moo!';
+        const border = '_'.repeat(message.length + 2);
+        addLine('output', `
+ ${border}
+< ${message} >
+ ${'-'.repeat(message.length + 2)}
+        \\   ^__^
+         \\  (oo)\\_______
+            (__)\\       )\\/\\
+                ||----w |
+                ||     ||
+`);
+        break;
+      }
+
+      case 'sl': {
+        addLine('output', `
+      ====        ________                ___________
+  _D _|  |_______/        \\__I_I_____===__|_________|
+   |(_)---  |   H\\________/ |   |        =|___ ___|
+   /     |  |   H  |  |     |   |         ||_| |_||
+  |      |  |   H  |__--------------------| [___] |
+  | ________|___H__/__|_____/[][]~\\_______|       |
+  |/ |   |-----------I_____I [][] []  D   |=======|_
+__/ =| o |=-~~\\  /~~\\  /~~\\  /~~\\ ____Y___________|__
+ |/-=|___|=O=====O=====O=====O   |_____/~\\___/
+  \\_/      \\__/  \\__/  \\__/  \\__/      \\_/
+
+You've been hit by the steam locomotive! 🚂
+`);
+        break;
+      }
+
+      case 'rm': {
+        if (args.join(' ').includes('-rf /') || args.join(' ').includes('-rf ~')) {
+          addLine('error', `
+rm: DANGER ZONE!
+
+⚠️  WARNING: You are about to delete everything!
+
+Just kidding, this is a simulated terminal.
+Your files are safe... this time. 😈
+
+Pro tip: Never run 'rm -rf /' on a real system.
+`);
+        } else {
+          addLine('error', `rm: cannot remove '${args[0] || ''}': This is a read-only portfolio`);
+        }
+        break;
+      }
+
+      case 'git': {
+        if (args[0] === 'blame') {
+          addLine('output', `
+commit a1b2c3d (HEAD -> main)
+Author: Owen Fisher <owenfisher46@gmail.com>
+Date:   ${new Date().toDateString()}
+
+    Made this awesome portfolio you're looking at right now
+
+(Hint: If there's a bug, blame Owen. If it's good, also Owen.)
+`);
+        } else if (args[0] === 'status') {
+          addLine('success', `
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+
+(This portfolio is always in a perfect state 😎)
+`);
+        } else {
+          addLine('error', `git: '${args[0]}' is not available in this terminal`);
+        }
+        break;
+      }
+
+      case 'fortune':
+        const fortunes = [
+          '"The best way to predict the future is to invent it." - Alan Kay',
+          '"Any sufficiently advanced technology is indistinguishable from magic." - Arthur C. Clarke',
+          '"First, solve the problem. Then, write the code." - John Johnson',
+          '"Debugging is twice as hard as writing the code." - Brian Kernighan',
+          '"There are only two hard things in CS: cache invalidation and naming things." - Phil Karlton',
+          '"Talk is cheap. Show me the code." - Linus Torvalds',
+        ];
+        addLine('output', fortunes[Math.floor(Math.random() * fortunes.length)]);
+        break;
+
+      case 'coffee':
+      case 'make':
+        if (cmd === 'make' && args[0] !== 'coffee') {
+          addLine('error', `make: *** No rule to make target '${args[0] || 'nothing'}'. Stop.`);
+        } else {
+          addLine('output', `
+    ( (
+     ) )
+  ........
+  |      |]
+  \\      /
+   \`----'
+
+☕ Here's your coffee! Now get back to coding.
+`);
+        }
+        break;
+
+      default:
+        addLine('error', `${cmd}: command not found. Type 'help' for available commands.`);
+    }
+
+    setCurrentInput('');
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      executeCommand(currentInput);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (history.length > 0) {
+        const newIndex = historyIndex < history.length - 1 ? historyIndex + 1 : historyIndex;
+        setHistoryIndex(newIndex);
+        setCurrentInput(history[history.length - 1 - newIndex] || '');
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex > 0) {
+        const newIndex = historyIndex - 1;
+        setHistoryIndex(newIndex);
+        setCurrentInput(history[history.length - 1 - newIndex] || '');
+      } else if (historyIndex === 0) {
+        setHistoryIndex(-1);
+        setCurrentInput('');
+      }
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      // Simple tab completion
+      const parts = currentInput.split(/\s+/);
+      const lastPart = parts[parts.length - 1];
+      if (lastPart) {
+        const targetDir = parts.length > 1 && parts[0] === 'cd' ? currentDir : currentDir;
+        const items = listDirectory(targetDir);
+        const matches = items.filter(item => item.startsWith(lastPart));
+        if (matches.length === 1) {
+          parts[parts.length - 1] = matches[0];
+          setCurrentInput(parts.join(' '));
+        } else if (matches.length > 1) {
+          addLine('output', matches.join('  '));
+        }
+      }
+    } else if (e.key === 'l' && e.ctrlKey) {
+      e.preventDefault();
+      setLines([]);
+    } else if (e.key === 'c' && e.ctrlKey) {
+      e.preventDefault();
+      addLine('input', getPrompt() + currentInput + '^C');
+      setCurrentInput('');
+    }
+  };
+
+  const handleContainerClick = () => {
+    inputRef.current?.focus();
+  };
+
+  // Render StackBlitz if active
+  if (stackblitzProject && stackblitzProject.stackblitz) {
+    return (
+      <StackBlitzEmbed
+        repo={stackblitzProject.stackblitz.repo}
+        openFile={stackblitzProject.stackblitz.openFile}
+        startScript={stackblitzProject.stackblitz.startScript}
+        onClose={() => setStackblitzProject(null)}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`terminal-view ${isFullscreen ? 'terminal-fullscreen' : ''}`}
+      onClick={handleContainerClick}
+      ref={containerRef}
+    >
+      <div className={`terminal-container ${isMinimized ? 'terminal-minimized' : ''}`}>
+        <div className="terminal-header">
+          <div className="terminal-dots">
+            <button
+              className="terminal-dot red"
+              onClick={(e) => { e.stopPropagation(); handleClose(); }}
+              title="Exit to GUI mode"
+              aria-label="Close terminal"
+            />
+            <button
+              className="terminal-dot yellow"
+              onClick={(e) => { e.stopPropagation(); handleMinimize(); }}
+              title={isMinimized ? "Restore" : "Minimize"}
+              aria-label="Minimize terminal"
+            />
+            <button
+              className="terminal-dot green"
+              onClick={(e) => { e.stopPropagation(); toggleFullscreen(); }}
+              title={isFullscreen ? "Exit fullscreen" : "Fullscreen"}
+              aria-label="Toggle fullscreen"
+            />
+          </div>
+          <span className="terminal-title">visitor@owenfisher.dev — terminal</span>
+        </div>
+
+        {!isMinimized && <div className="terminal-body" ref={outputRef}>
+          <div className="terminal-output">
+            {lines.map((line, index) => (
+              <div
+                key={index}
+                className={`terminal-line ${line.type === 'error' ? 'term-error' : ''} ${line.type === 'success' ? 'term-success' : ''} ${line.type === 'ascii' ? 'term-accent' : ''}`}
+                style={{ whiteSpace: 'pre-wrap' }}
+              >
+                {line.type === 'ascii' ? line.content : linkifyText(line.content)}
+              </div>
+            ))}
+          </div>
+
+          <div className="terminal-input-line">
+            <span className="terminal-prompt">visitor</span>
+            <span style={{ color: 'var(--text-dim)' }}>@</span>
+            <span className="terminal-path">owenfisher.dev</span>
+            <span style={{ color: 'var(--text-dim)' }}>:</span>
+            <span className="terminal-path">{currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')}</span>
+            <span style={{ color: 'var(--text-dim)' }}>$ </span>
+            <input
+              ref={inputRef}
+              type="text"
+              className="terminal-input"
+              value={currentInput}
+              onChange={(e) => setCurrentInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+              spellCheck={false}
+              autoComplete="off"
+            />
+          </div>
+        </div>}
+      </div>
+    </div>
+  );
+}
