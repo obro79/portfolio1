@@ -11,6 +11,35 @@ interface TerminalLine {
   content: string;
 }
 
+// Snake game types
+type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
+type Position = { x: number; y: number };
+
+interface SnakeGameState {
+  snake: Position[];
+  food: Position;
+  direction: Direction;
+  score: number;
+  gameOver: boolean;
+  started: boolean;
+}
+
+const BOARD_WIDTH = 20;
+const BOARD_HEIGHT = 10;
+
+const createInitialSnakeState = (): SnakeGameState => ({
+  snake: [
+    { x: 5, y: 5 },
+    { x: 4, y: 5 },
+    { x: 3, y: 5 },
+  ],
+  food: { x: 15, y: 5 },
+  direction: 'RIGHT',
+  score: 0,
+  gameOver: false,
+  started: false,
+});
+
 const ASCII_NAME = ` ██████╗ ██╗    ██╗███████╗███╗   ██╗
 ██╔═══██╗██║    ██║██╔════╝████╗  ██║
 ██║   ██║██║ █╗ ██║█████╗  ██╔██╗ ██║
@@ -79,6 +108,9 @@ DEVELOPER TOOLS
   fortune       Programming wisdom
   history       Command history
 
+GAMES
+  snake         Classic snake game
+
 TRY THESE
   cowsay <msg>  sl  coffee  vim  rm -rf /
   fortune  git blame  sudo hire-owen
@@ -109,6 +141,12 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [stackblitzProject, setStackblitzProject] = useState<Project | null>(null);
+
+  // Snake game state
+  const [isPlayingSnake, setIsPlayingSnake] = useState(false);
+  const [snakeGame, setSnakeGame] = useState<SnakeGameState>(createInitialSnakeState());
+  const snakeDirectionRef = useRef<Direction>('RIGHT');
+  const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const outputRef = useRef<HTMLDivElement>(null);
@@ -141,6 +179,147 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
     setIsMinimized(!isMinimized);
   };
 
+  // Snake game functions
+  const spawnFood = (snake: Position[]): Position => {
+    let newFood: Position;
+    do {
+      newFood = {
+        x: Math.floor(Math.random() * BOARD_WIDTH),
+        y: Math.floor(Math.random() * BOARD_HEIGHT),
+      };
+    } while (snake.some(seg => seg.x === newFood.x && seg.y === newFood.y));
+    return newFood;
+  };
+
+  const startSnakeGame = () => {
+    const initialState = createInitialSnakeState();
+    setSnakeGame(initialState);
+    snakeDirectionRef.current = 'RIGHT';
+    setIsPlayingSnake(true);
+  };
+
+  const endSnakeGame = () => {
+    if (gameLoopRef.current) {
+      clearInterval(gameLoopRef.current);
+      gameLoopRef.current = null;
+    }
+    setIsPlayingSnake(false);
+    addLine('output', `Game Over! Final score: ${snakeGame.score}`);
+  };
+
+  const updateSnakeGame = () => {
+    setSnakeGame(prev => {
+      if (prev.gameOver || !prev.started) return prev;
+
+      const head = prev.snake[0];
+      const direction = snakeDirectionRef.current;
+
+      let newHead: Position;
+      switch (direction) {
+        case 'UP':
+          newHead = { x: head.x, y: head.y - 1 };
+          break;
+        case 'DOWN':
+          newHead = { x: head.x, y: head.y + 1 };
+          break;
+        case 'LEFT':
+          newHead = { x: head.x - 1, y: head.y };
+          break;
+        case 'RIGHT':
+          newHead = { x: head.x + 1, y: head.y };
+          break;
+      }
+
+      // Check wall collision
+      if (newHead.x < 0 || newHead.x >= BOARD_WIDTH ||
+          newHead.y < 0 || newHead.y >= BOARD_HEIGHT) {
+        return { ...prev, gameOver: true };
+      }
+
+      // Check self collision
+      if (prev.snake.some(seg => seg.x === newHead.x && seg.y === newHead.y)) {
+        return { ...prev, gameOver: true };
+      }
+
+      const newSnake = [newHead, ...prev.snake];
+      let newFood = prev.food;
+      let newScore = prev.score;
+
+      // Check food collision
+      if (newHead.x === prev.food.x && newHead.y === prev.food.y) {
+        newScore += 10;
+        newFood = spawnFood(newSnake);
+      } else {
+        newSnake.pop(); // Remove tail if no food eaten
+      }
+
+      return {
+        ...prev,
+        snake: newSnake,
+        food: newFood,
+        score: newScore,
+        direction,
+      };
+    });
+  };
+
+  const renderSnakeBoard = (): string => {
+    const board: string[][] = [];
+
+    // Initialize empty board
+    for (let y = 0; y < BOARD_HEIGHT; y++) {
+      board[y] = [];
+      for (let x = 0; x < BOARD_WIDTH; x++) {
+        board[y][x] = ' ';
+      }
+    }
+
+    // Place food
+    board[snakeGame.food.y][snakeGame.food.x] = '◆';
+
+    // Place snake
+    snakeGame.snake.forEach((seg, i) => {
+      if (seg.y >= 0 && seg.y < BOARD_HEIGHT && seg.x >= 0 && seg.x < BOARD_WIDTH) {
+        board[seg.y][seg.x] = i === 0 ? '●' : '○';
+      }
+    });
+
+    // Build board string with border
+    const topBorder = '┌' + '─'.repeat(BOARD_WIDTH) + '┐';
+    const bottomBorder = '└' + '─'.repeat(BOARD_WIDTH) + '┘';
+
+    const rows = board.map(row => '│' + row.join('') + '│');
+
+    const instructions = snakeGame.started
+      ? (snakeGame.gameOver ? 'GAME OVER! Press any key to exit' : 'Arrow keys or WASD to move')
+      : 'Press any key to start';
+
+    return [
+      '',
+      '  🐍 SNAKE',
+      '',
+      topBorder,
+      ...rows,
+      bottomBorder,
+      '',
+      `  Score: ${snakeGame.score}`,
+      `  ${instructions}`,
+      '',
+    ].join('\n');
+  };
+
+  // Snake game loop effect
+  useEffect(() => {
+    if (isPlayingSnake && snakeGame.started && !snakeGame.gameOver) {
+      gameLoopRef.current = setInterval(updateSnakeGame, 150);
+      return () => {
+        if (gameLoopRef.current) {
+          clearInterval(gameLoopRef.current);
+        }
+      };
+    }
+  }, [isPlayingSnake, snakeGame.started, snakeGame.gameOver]);
+
   useEffect(() => {
     if (outputRef.current) {
       outputRef.current.scrollTop = outputRef.current.scrollHeight;
@@ -150,6 +329,61 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+
+  // Snake game keyboard controls
+  useEffect(() => {
+    if (!isPlayingSnake) return;
+
+    const handleSnakeKeyDown = (e: globalThis.KeyboardEvent) => {
+      // Prevent default for game keys
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'W', 'A', 'S', 'D'].includes(e.key)) {
+        e.preventDefault();
+      }
+
+      // If game over, any key exits
+      if (snakeGame.gameOver) {
+        endSnakeGame();
+        return;
+      }
+
+      // If not started, any key starts the game
+      if (!snakeGame.started) {
+        setSnakeGame(prev => ({ ...prev, started: true }));
+        return;
+      }
+
+      // Direction controls
+      const currentDir = snakeDirectionRef.current;
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          if (currentDir !== 'DOWN') snakeDirectionRef.current = 'UP';
+          break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          if (currentDir !== 'UP') snakeDirectionRef.current = 'DOWN';
+          break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          if (currentDir !== 'RIGHT') snakeDirectionRef.current = 'LEFT';
+          break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          if (currentDir !== 'LEFT') snakeDirectionRef.current = 'RIGHT';
+          break;
+        case 'Escape':
+          endSnakeGame();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleSnakeKeyDown);
+    return () => window.removeEventListener('keydown', handleSnakeKeyDown);
+  }, [isPlayingSnake, snakeGame.gameOver, snakeGame.started]);
 
   const getPrompt = () => {
     const path = currentDir.length === 0 ? '~' : '~/' + currentDir.join('/');
@@ -555,6 +789,10 @@ nothing to commit, working tree clean
         }
         break;
 
+      case 'snake':
+        startSnakeGame();
+        break;
+
       default:
         addLine('error', `${cmd}: command not found. Type 'help' for available commands.`);
     }
@@ -656,37 +894,47 @@ nothing to commit, working tree clean
         </div>
 
         {!isMinimized && <div className="terminal-body" ref={outputRef}>
-          <div className="terminal-output">
-            {lines.map((line, index) => (
-              <div
-                key={index}
-                className={`terminal-line ${line.type === 'error' ? 'term-error' : ''} ${line.type === 'success' ? 'term-success' : ''} ${line.type === 'ascii' ? 'term-accent' : ''}`}
-                style={{ whiteSpace: 'pre-wrap' }}
-              >
-                {line.type === 'ascii' ? line.content : linkifyText(line.content)}
+          {isPlayingSnake ? (
+            <div className="terminal-output">
+              <div className="terminal-line term-accent" style={{ whiteSpace: 'pre' }}>
+                {renderSnakeBoard()}
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <>
+              <div className="terminal-output">
+                {lines.map((line, index) => (
+                  <div
+                    key={index}
+                    className={`terminal-line ${line.type === 'error' ? 'term-error' : ''} ${line.type === 'success' ? 'term-success' : ''} ${line.type === 'ascii' ? 'term-accent' : ''}`}
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  >
+                    {line.type === 'ascii' ? line.content : linkifyText(line.content)}
+                  </div>
+                ))}
+              </div>
 
-          <div className="terminal-input-line">
-            <span className="terminal-prompt">visitor</span>
-            <span style={{ color: 'var(--text-dim)' }}>@</span>
-            <span className="terminal-path">owenfisher.dev</span>
-            <span style={{ color: 'var(--text-dim)' }}>:</span>
-            <span className="terminal-path">{currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')}</span>
-            <span style={{ color: 'var(--text-dim)' }}>$ </span>
-            <input
-              ref={inputRef}
-              type="text"
-              className="terminal-input"
-              value={currentInput}
-              onChange={(e) => setCurrentInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoFocus
-              spellCheck={false}
-              autoComplete="off"
-            />
-          </div>
+              <div className="terminal-input-line">
+                <span className="terminal-prompt">visitor</span>
+                <span style={{ color: 'var(--text-dim)' }}>@</span>
+                <span className="terminal-path">owenfisher.dev</span>
+                <span style={{ color: 'var(--text-dim)' }}>:</span>
+                <span className="terminal-path">{currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')}</span>
+                <span style={{ color: 'var(--text-dim)' }}>$ </span>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="terminal-input"
+                  value={currentInput}
+                  onChange={(e) => setCurrentInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  autoFocus
+                  spellCheck={false}
+                  autoComplete="off"
+                />
+              </div>
+            </>
+          )}
         </div>}
       </div>
     </div>

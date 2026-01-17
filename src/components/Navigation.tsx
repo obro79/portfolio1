@@ -30,8 +30,7 @@ const Navigation: React.FC = () => {
   return (
     <nav className="nav">
       <a href="#top" className="brand" aria-label="Owen Fisher home">
-        <span className="brand-mark">OF</span>
-        <span className="brand-text">Owen Fisher</span>
+        Owen Fisher
       </a>
       <button className={`nav-toggle ${isOpen ? 'is-open' : ''}`} aria-expanded={isOpen} aria-controls="nav-menu" onClick={toggleNav}>
         <span className="sr-only">Toggle navigation</span>
