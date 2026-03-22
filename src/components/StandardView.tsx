@@ -11,6 +11,21 @@ const ASCII_NAME = `
  ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
 `;
 
+const ASCII_NAME_MOBILE = `
+ ██████╗ ██╗    ██╗███████╗███╗   ██╗
+██╔═══██╗██║    ██║██╔════╝████╗  ██║
+██║   ██║██║ █╗ ██║█████╗  ██╔██╗ ██║
+██║   ██║██║███╗██║██╔══╝  ██║╚██╗██║
+╚██████╔╝╚███╔███╔╝███████╗██║ ╚████║
+ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝
+███████╗██╗███████╗██╗  ██╗███████╗██████╗
+██╔════╝██║██╔════╝██║  ██║██╔════╝██╔══██╗
+█████╗  ██║███████╗███████║█████╗  ██████╔╝
+██╔══╝  ██║╚════██║██╔══██║██╔══╝  ██╔══██╗
+██║     ██║███████║██║  ██║███████╗██║  ██║
+╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
+`;
+
 const experiences = [
   {
     period: 'Sept. 2025 — Present',
@@ -45,7 +60,7 @@ interface StandardViewProps {
 }
 
 export default function StandardView({ onTerminalDemo }: StandardViewProps) {
-  const [filter, setFilter] = useState<FilterType>('all');
+  const [filter, setFilter] = useState<FilterType>('highlighted');
   const [copied, setCopied] = useState(false);
 
   const filteredProjects = projects.filter(project => {
@@ -101,7 +116,8 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
         <section className="hero" id="about">
           <div className="container">
             <div className="hero-content">
-              <pre className="hero-ascii">{ASCII_NAME}</pre>
+              <pre className="hero-ascii hero-ascii-desktop">{ASCII_NAME}</pre>
+              <pre className="hero-ascii hero-ascii-mobile">{ASCII_NAME_MOBILE}</pre>
 
               <p className="hero-prompt">
                 <span className="user">visitor</span>@<span className="path">owenfisher.dev</span>:~$ whoami

@@ -481,6 +481,10 @@ a:hover {
   white-space: pre;
 }
 
+.hero-ascii-mobile {
+  display: none;
+}
+
 .hero-prompt {
   margin-bottom: var(--spacing-md);
 }
@@ -1045,6 +1049,14 @@ a:hover {
   .hero-ascii {
     font-size: 6px;
     overflow-x: auto;
+  }
+
+  .hero-ascii-desktop {
+    display: none;
+  }
+
+  .hero-ascii-mobile {
+    display: block;
   }
 
   .nav-links {
