@@ -1,76 +1,130 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-interface TickerItem {
+interface CryptoPrice {
   symbol: string;
   price: number;
-  change24h: number;
+  prevPrice: number;
+  open24h: number;
 }
 
-const CRYPTO_IDS = 'bitcoin,ethereum,solana,dogecoin,cardano';
-const CRYPTO_SYMBOLS: Record<string, string> = {
-  bitcoin: 'BTC',
-  ethereum: 'ETH',
-  solana: 'SOL',
-  dogecoin: 'DOGE',
-  cardano: 'ADA',
+const PRODUCT_IDS = ['BTC-USD', 'ETH-USD', 'SOL-USD'];
+const DISPLAY_SYMBOLS: Record<string, string> = {
+  'BTC-USD': 'BTC',
+  'ETH-USD': 'ETH',
+  'SOL-USD': 'SOL',
 };
 
-const STATIC_TICKERS: TickerItem[] = [
-  { symbol: 'SPY', price: 0, change24h: 0 },
-  { symbol: 'QQQ', price: 0, change24h: 0 },
-  { symbol: 'AAPL', price: 0, change24h: 0 },
-];
-
 export default function MarketTicker() {
-  const [tickers, setTickers] = useState<TickerItem[]>([]);
+  const [prices, setPrices] = useState<Record<string, CryptoPrice>>({});
+  const [connected, setConnected] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const fetchPrices = async () => {
-      try {
-        const res = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${CRYPTO_IDS}&vs_currencies=usd&include_24hr_change=true`
-        );
-        if (!res.ok) return;
-        const data = await res.json();
+    function connect() {
+      const ws = new WebSocket('wss://ws-feed.exchange.coinbase.com');
+      wsRef.current = ws;
 
-        const cryptoTickers: TickerItem[] = Object.entries(data).map(
-          ([id, info]: [string, any]) => ({
-            symbol: CRYPTO_SYMBOLS[id] || id.toUpperCase(),
-            price: info.usd,
-            change24h: info.usd_24h_change ?? 0,
-          })
-        );
+      ws.onopen = () => {
+        setConnected(true);
+        ws.send(JSON.stringify({
+          type: 'subscribe',
+          product_ids: PRODUCT_IDS,
+          channels: ['ticker'],
+        }));
+      };
 
-        setTickers(cryptoTickers);
-      } catch {
-        // Silently fail — ticker just won't show
-      }
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type !== 'ticker') return;
+
+        const productId = data.product_id as string;
+        const price = parseFloat(data.price);
+        const open24h = parseFloat(data.open_24h);
+
+        setPrices((prev) => ({
+          ...prev,
+          [productId]: {
+            symbol: DISPLAY_SYMBOLS[productId] || productId,
+            price,
+            prevPrice: prev[productId]?.price ?? price,
+            open24h,
+          },
+        }));
+      };
+
+      ws.onclose = () => {
+        setConnected(false);
+        // Reconnect after 3s
+        setTimeout(connect, 3000);
+      };
+
+      ws.onerror = () => {
+        ws.close();
+      };
+    }
+
+    connect();
+
+    return () => {
+      wsRef.current?.close();
     };
-
-    fetchPrices();
-    const interval = setInterval(fetchPrices, 60000);
-    return () => clearInterval(interval);
   }, []);
 
-  if (tickers.length === 0) return null;
+  const entries = PRODUCT_IDS.map((id) => prices[id]).filter(Boolean);
 
-  // Duplicate items for seamless loop
-  const items = [...tickers, ...tickers];
+  if (entries.length === 0) {
+    return (
+      <div className="market-section fade-in-section">
+        <div className="section-header">
+          <p className="section-command">ws connect coinbase</p>
+          <h2 className="section-title">Live Markets</h2>
+        </div>
+        <div className="market-grid">
+          <p style={{ color: 'var(--text-dim)', fontSize: '13px' }}>Connecting to Coinbase WebSocket...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="market-ticker">
-      <div className="market-ticker-track">
-        {items.map((t, i) => (
-          <span key={i} className="market-ticker-item">
-            <span className="ticker-symbol">{t.symbol}</span>
-            <span className="ticker-price">
-              ${t.price >= 1 ? t.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : t.price.toFixed(4)}
-            </span>
-            <span className={`ticker-change ${t.change24h >= 0 ? 'positive' : 'negative'}`}>
-              {t.change24h >= 0 ? '+' : ''}{t.change24h.toFixed(2)}%
-            </span>
-          </span>
-        ))}
+    <div className="market-section fade-in-section">
+      <div className="section-header">
+        <p className="section-command">ws connect coinbase</p>
+        <h2 className="section-title">Live Markets</h2>
+      </div>
+      <div className="market-status">
+        <span className={`status-dot ${connected ? 'live' : ''}`} />
+        <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+          {connected ? 'LIVE' : 'RECONNECTING'}
+        </span>
+      </div>
+      <div className="market-grid">
+        {entries.map((entry) => {
+          const change = entry.open24h ? ((entry.price - entry.open24h) / entry.open24h) * 100 : 0;
+          const direction = entry.price > entry.prevPrice ? 'up' : entry.price < entry.prevPrice ? 'down' : '';
+
+          return (
+            <div key={entry.symbol} className={`market-card ${direction}`}>
+              <div className="market-card-header">
+                <span className="market-symbol">{entry.symbol}</span>
+                <span className={`market-change ${change >= 0 ? 'positive' : 'negative'}`}>
+                  {change >= 0 ? '+' : ''}{change.toFixed(2)}%
+                </span>
+              </div>
+              <div className={`market-price ${direction}`}>
+                ${entry.price.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </div>
+              <div className="market-open">
+                <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+                  24h open: ${entry.open24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

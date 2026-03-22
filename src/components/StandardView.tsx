@@ -242,6 +242,13 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
           </div>
         </section>
 
+        {/* Live Markets Section */}
+        <section className="section" id="markets">
+          <div className="container">
+            <MarketTicker />
+          </div>
+        </section>
+
         {/* Contact Section */}
         <section className="section" id="contact">
           <div className="container">
@@ -297,8 +304,6 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
           </div>
         </div>
       </footer>
-
-      <MarketTicker />
     </div>
   );
 }
