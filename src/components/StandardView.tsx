@@ -243,7 +243,7 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
         </section>
 
         {/* Live Markets Section */}
-        <section className="section" id="markets">
+        <section className="section" id="markets" style={{ paddingBottom: 0 }}>
           <div className="container">
             <MarketTicker />
           </div>

@@ -7,11 +7,12 @@ interface CryptoPrice {
   open24h: number;
 }
 
-const PRODUCT_IDS = ['BTC-USD', 'ETH-USD', 'SOL-USD'];
+const PRODUCT_IDS = ['BTC-USD', 'ETH-USD', 'SOL-USD', 'DOGE-USD'];
 const DISPLAY_SYMBOLS: Record<string, string> = {
   'BTC-USD': 'BTC',
   'ETH-USD': 'ETH',
   'SOL-USD': 'SOL',
+  'DOGE-USD': 'DOGE',
 };
 
 export default function MarketTicker() {
