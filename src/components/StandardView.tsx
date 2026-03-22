@@ -39,7 +39,11 @@ const experiences = [
 
 type FilterType = 'all' | 'highlighted' | 'hackathon' | 'school';
 
-export default function StandardView() {
+interface StandardViewProps {
+  onTerminalDemo?: (command: string) => void;
+}
+
+export default function StandardView({ onTerminalDemo }: StandardViewProps) {
   const [filter, setFilter] = useState<FilterType>('all');
   const [copied, setCopied] = useState(false);
 
@@ -182,7 +186,16 @@ export default function StandardView() {
                         github
                       </a>
                     )}
-                    {project.links.demo && (
+                    {project.terminalDemo && onTerminalDemo && (
+                      <button
+                        className="project-link"
+                        onClick={() => onTerminalDemo(project.terminalDemo!)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}
+                      >
+                        demo
+                      </button>
+                    )}
+                    {project.links.demo && !project.terminalDemo && (
                       <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="project-link">
                         demo
                       </a>

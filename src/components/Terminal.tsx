@@ -138,9 +138,10 @@ Try: cd projects/rehabify && cat README.md
 
 interface TerminalViewProps {
   onClose?: () => void;
+  initialCommand?: string;
 }
 
-export default function TerminalView({ onClose }: TerminalViewProps) {
+export default function TerminalView({ onClose, initialCommand }: TerminalViewProps) {
   const [lines, setLines] = useState<TerminalLine[]>([
     { type: 'ascii', content: ASCII_NAME },
     { type: 'output', content: WELCOME_TEXT }
@@ -361,6 +362,15 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
     if (savedAccent) {
       document.documentElement.style.setProperty('--accent', savedAccent);
       document.documentElement.style.setProperty('--accent-glow', `${savedAccent}26`);
+    }
+  }, []);
+
+  const initialCommandRef = useRef(initialCommand);
+  useEffect(() => {
+    if (initialCommandRef.current) {
+      const cmd = initialCommandRef.current;
+      initialCommandRef.current = undefined;
+      setTimeout(() => executeCommand(cmd), 500);
     }
   }, []);
 

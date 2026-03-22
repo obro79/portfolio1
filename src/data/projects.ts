@@ -18,6 +18,8 @@ export interface Project {
     openFile?: string; // File to open by default
     startScript?: string; // npm script to run (default: dev)
   };
+  // Terminal command to run as a demo (switches to terminal mode)
+  terminalDemo?: string;
 }
 
 export const projects: Project[] = [
@@ -42,7 +44,8 @@ export const projects: Project[] = [
     gradient: 'linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 69, 0, 0.3))',
     links: {
       github: 'https://github.com/obro79/Flux'
-    }
+    },
+    terminalDemo: 'run flux'
   },
   {
     id: 'prepme',

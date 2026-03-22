@@ -11,6 +11,7 @@ const STORAGE_KEY = 'portfolio-view-mode';
 export default function Home() {
   const [mode, setMode] = useState<ViewMode>('terminal');
   const [isLoading, setIsLoading] = useState(true);
+  const [terminalCommand, setTerminalCommand] = useState<string | undefined>();
 
   useEffect(() => {
     // Check for saved preference, default to terminal
@@ -24,6 +25,12 @@ export default function Home() {
   const handleModeChange = (newMode: ViewMode) => {
     setMode(newMode);
     localStorage.setItem(STORAGE_KEY, newMode);
+  };
+
+  const handleTerminalDemo = (command: string) => {
+    setTerminalCommand(command);
+    setMode('terminal');
+    localStorage.setItem(STORAGE_KEY, 'terminal');
   };
 
 
@@ -58,7 +65,15 @@ export default function Home() {
       </Head>
 
       <ModeToggle mode={mode} onModeChange={handleModeChange} />
-      {mode === 'standard' ? <StandardView /> : <TerminalView onClose={() => handleModeChange('standard')} />}
+      {mode === 'standard' ? (
+        <StandardView onTerminalDemo={handleTerminalDemo} />
+      ) : (
+        <TerminalView
+          onClose={() => handleModeChange('standard')}
+          initialCommand={terminalCommand}
+          key={terminalCommand}
+        />
+      )}
     </>
   );
 }
