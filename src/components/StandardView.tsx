@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { projects } from '../data/projects';
+import MarketTicker from './MarketTicker';
 
 const ASCII_NAME = `
  ██████╗ ██╗    ██╗███████╗███╗   ██╗    ███████╗██╗███████╗██╗  ██╗███████╗██████╗
@@ -57,6 +58,25 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.fade-in-section').forEach((el) => {
+      observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [filter]);
 
   return (
     <div className="standard-view">
@@ -125,14 +145,14 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
         {/* Experience Section */}
         <section className="section" id="experience">
           <div className="container">
-            <div className="section-header">
+            <div className="section-header fade-in-section">
               <p className="section-command">cat experience.log</p>
               <h2 className="section-title">Experience</h2>
             </div>
 
             <div className="experience-list">
               {experiences.map((exp, index) => (
-                <article key={index} className="experience-item">
+                <article key={index} className="experience-item fade-in-section" style={{ transitionDelay: `${index * 0.1}s` }}>
                   <div className="experience-header">
                     <div>
                       <span className="experience-timestamp">{exp.period}</span>
@@ -150,7 +170,7 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
         {/* Projects Section */}
         <section className="section" id="projects">
           <div className="container">
-            <div className="section-header">
+            <div className="section-header fade-in-section">
               <p className="section-command">ls projects/</p>
               <h2 className="section-title">Projects</h2>
             </div>
@@ -169,7 +189,7 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
 
             <div className="projects-grid">
               {filteredProjects.map((project) => (
-                <article key={project.id} className="project-card">
+                <article key={project.id} className="project-card fade-in-section" style={{ transitionDelay: `${filteredProjects.indexOf(project) * 0.05}s` }}>
                   <div className="project-header">
                     <h3 className="project-name">{project.title}</h3>
                     <span className="project-year">{project.year}</span>
@@ -225,12 +245,12 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
         {/* Contact Section */}
         <section className="section" id="contact">
           <div className="container">
-            <div className="section-header">
+            <div className="section-header fade-in-section">
               <p className="section-command">cat contact.txt</p>
               <h2 className="section-title">Contact</h2>
             </div>
 
-            <div className="contact-content">
+            <div className="contact-content fade-in-section">
               <p style={{ color: 'var(--text-dim)', marginBottom: 'var(--spacing-lg)' }}>
                 Available for freelance projects and consulting.
               </p>
@@ -277,6 +297,8 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
           </div>
         </div>
       </footer>
+
+      <MarketTicker />
     </div>
   );
 }

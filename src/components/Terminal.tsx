@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import dynamic from 'next/dynamic';
-import { fileSystem, resolvePath, getNode, listDirectory, FileSystemNode } from '../data/filesystem';
+import { resolvePath, getNode, listDirectory, FileSystemNode } from '../data/filesystem';
 import { projects, Project } from '../data/projects';
 
 // Dynamic import to prevent SSR issues with StackBlitz
@@ -50,13 +50,14 @@ const ASCII_NAME = ` ██████╗ ██╗    ██╗█████
 const WELCOME_TEXT = `
 Welcome to Owen Fisher's interactive terminal portfolio.
 
-Quick start:
-  help              See ALL commands
-  ls                Explore files
-  cd projects       Browse my work
-  npm run dev       Run a project live
+Try these:
+  run flux          Launch a live data pipeline demo
+  neofetch          System info, terminal-style
+  theme dracula     Switch color themes
+  snake             Play snake in your terminal
+  git log           See my real GitHub activity
 
-Type 'help' to see everything you can do here.
+Type 'help' for the full command list.
 `;
 
 // Helper function to convert URLs in text to clickable links
@@ -91,49 +92,17 @@ const COMMANDS = [
 ];
 
 const HELP_TEXT = `
-NAVIGATION
-  ls [dir]      List directory contents
-  cd <dir>      Change directory
-  cat <file>    Display file contents
-  pwd           Print working directory
-  tree [dir]    Display directory tree
+COOL STUFF
+  run flux         Live data pipeline demo        neofetch         System info
+  theme <name>     Switch theme (dracula,         git log          Live GitHub activity
+                   gruvbox, solarized)            snake            Classic snake game
+  theme accent #   Custom accent color            resume           View resume
+  sudo hire-owen   ???                            cowsay <msg>     Moo
 
-PORTFOLIO
-  whoami        About me
-  contact       Contact information
-  resume        View resume (also: cat resume.txt)
-  mailto        Open email client
+NAVIGATE                                         PORTFOLIO
+  ls / cd / cat / pwd / tree                       whoami  contact  resume  mailto
 
-RUN PROJECTS (cd into projects/<name> first)
-  npm run dev   Launch project in StackBlitz IDE
-  npm install   Install dependencies
-  nrd           Shortcut for npm run dev
-  run flux      Live Flux pipeline demo
-
-DEVELOPER TOOLS
-  neofetch      System info
-  git log       Live GitHub activity feed
-  git status    Check repo status
-  git blame     Who wrote this?
-  theme [name]  Switch color scheme
-  fortune       Programming wisdom
-  history       Command history
-
-GAMES
-  snake         Classic snake game
-
-TRY THESE
-  cowsay <msg>  sl  coffee  vim  rm -rf /
-  fortune  git blame  sudo hire-owen
-
-SHORTCUTS
-  Tab           Autocomplete commands & paths
-  Up/Down       Command history
-  Ctrl+L        Clear screen
-  Ctrl+C        Cancel input
-  clear         Clear terminal
-
-Try: cd projects/rehabify && cat README.md
+SHORTCUTS: Tab autocomplete | Up/Down history | Ctrl+L clear | Ctrl+C cancel
 `;
 
 interface TerminalViewProps {
@@ -554,10 +523,6 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
             addLine('output', '(empty directory)');
           }
         } else {
-          const formatted = items.map(item => {
-            const node = getNode([...targetPath, item]);
-            return node?.type === 'directory' ? `\x1b[36m${item}/\x1b[0m` : item;
-          });
           // Simple formatting - show as directory listing
           const output = items.map(item => {
             const node = getNode([...targetPath, item]);

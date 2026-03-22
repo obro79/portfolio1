@@ -293,6 +293,71 @@ a:hover {
   color: var(--accent);
 }
 
+/* Scroll fade-in animations */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Market Ticker */
+.market-ticker {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.market-ticker-track {
+  display: flex;
+  gap: var(--spacing-lg);
+  animation: ticker-scroll 30s linear infinite;
+  white-space: nowrap;
+}
+
+.market-ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 12px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.market-ticker-item .ticker-symbol {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.market-ticker-item .ticker-price {
+  color: var(--text-dim);
+}
+
+.market-ticker-item .ticker-change.positive {
+  color: var(--success);
+}
+
+.market-ticker-item .ticker-change.negative {
+  color: var(--error);
+}
+
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 /* ===================== */
 /* STANDARD MODE STYLES  */
 /* ===================== */
@@ -300,6 +365,7 @@ a:hover {
 .standard-view {
   min-height: 100vh;
   padding-top: var(--spacing-3xl);
+  padding-bottom: 40px;
 }
 
 /* Header */
@@ -980,6 +1046,11 @@ button:focus-visible {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .fade-in-section {
+    opacity: 1;
+    transform: none;
   }
 }
 
