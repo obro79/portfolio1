@@ -22,11 +22,34 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: 'rehabify',
+    title: 'Rehabify',
+    year: 'Jan. 2026',
+    description: 'nwHacks 2026 1st Place Winner. AI-powered physiotherapy coach using real-time computer vision (MediaPipe) and voice AI to provide instant form correction during home exercises.',
+    categories: ['highlighted', 'hackathon'],
+    gradient: 'linear-gradient(135deg, rgba(107, 255, 193, 0.3), rgba(59, 201, 255, 0.3))',
+    links: {
+      github: 'https://github.com/obro79/Rehabify',
+      devpost: 'https://devpost.com/software/rehabify'
+    }
+  },
+  {
+    id: 'flux',
+    title: 'Flux',
+    year: 'Mar. 2026',
+    description: 'Real-time data pipeline built with FastAPI, Redpanda (Kafka), Redis, and PostgreSQL. Streams and processes high-throughput event data with async consumers, dockerized microservices, and a Kafka UI for observability.',
+    categories: ['highlighted'],
+    gradient: 'linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 69, 0, 0.3))',
+    links: {
+      github: 'https://github.com/obro79/Flux'
+    }
+  },
+  {
     id: 'prepme',
     title: 'PrepMe',
     year: 'May 2025',
     description: 'Built AI voice interviewer with real-time speech, transcripts, and 100 Lighthouse accessibility score.',
-    categories: ['highlighted'],
+    categories: ['all'],
     gradient: 'linear-gradient(135deg, rgba(124, 108, 255, 0.3), rgba(59, 201, 255, 0.3))',
     links: {
       github: 'https://github.com/obro79/mock_interview_ai',
@@ -42,7 +65,7 @@ export const projects: Project[] = [
     title: 'Financely',
     year: 'June 2025',
     description: 'Configured Vercel CI/CD pipeline to auto-build/test/deploy, cutting manual release steps 75%. Built ETL services in Python/Node to load transactions into SQL.',
-    categories: ['highlighted'],
+    categories: ['all'],
     gradient: 'linear-gradient(135deg, rgba(255, 107, 170, 0.3), rgba(124, 108, 255, 0.3))',
     links: {
       github: 'https://github.com/obro79/financely',

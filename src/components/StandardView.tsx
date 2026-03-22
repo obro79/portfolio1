@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { projects } from '../data/projects';
 
 const ASCII_NAME = `
- ██████╗ ██╗    ██╗███████╗███╗   ██╗
-██╔═══██╗██║    ██║██╔════╝████╗  ██║
-██║   ██║██║ █╗ ██║█████╗  ██╔██╗ ██║
-██║   ██║██║███╗██║██╔══╝  ██║╚██╗██║
-╚██████╔╝╚███╔███╔╝███████╗██║ ╚████║
- ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝
+ ██████╗ ██╗    ██╗███████╗███╗   ██╗    ███████╗██╗███████╗██╗  ██╗███████╗██████╗
+██╔═══██╗██║    ██║██╔════╝████╗  ██║    ██╔════╝██║██╔════╝██║  ██║██╔════╝██╔══██╗
+██║   ██║██║ █╗ ██║█████╗  ██╔██╗ ██║    █████╗  ██║███████╗███████║█████╗  ██████╔╝
+██║   ██║██║███╗██║██╔══╝  ██║╚██╗██║    ██╔══╝  ██║╚════██║██╔══██║██╔══╝  ██╔══██╗
+╚██████╔╝╚███╔███╔╝███████╗██║ ╚████║    ██║     ██║███████║██║  ██║███████╗██║  ██║
+ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
 `;
 
 const experiences = [
@@ -15,38 +15,25 @@ const experiences = [
     period: 'Sept. 2025 — Present',
     company: 'Royal Bank of Canada',
     role: 'Quantitative Developer',
-    details: [
-      'Optimized risk assessment by migrating pricing engine from MATLAB to Python + Dask, deploying scalable pipelines that sped up valuations 70% and cut maintenance 50%+',
-      'Created comprehensive onboarding documentation using Confluence, cutting onboarding time by 50%'
-    ]
+    description: 'Optimized risk assessment by migrating pricing engine from MATLAB to Python + Dask, deploying scalable pipelines that sped up valuations 70% and cut maintenance 50%+. Created comprehensive onboarding documentation using Confluence, cutting onboarding time by 50%.'
   },
   {
     period: 'Jan. 2025 — May 2025',
     company: 'Quantico Research',
     role: 'Quantitative Developer',
-    details: [
-      'Led development of a Hidden Markov Model in Stan with a Python/NumPy interface, slashing seismic risk exposure by 80%',
-      'Designed real-time seismic data pipelines in Python using NumPy for vectorized data cleaning',
-      'Automated walk-forward validation and stress testing with PyTest inside a CI/CD pipeline'
-    ]
+    description: 'Led development of a Hidden Markov Model in Stan with a Python/NumPy interface, slashing seismic risk exposure by 80%. Designed real-time seismic data pipelines in Python using NumPy for vectorized data cleaning. Automated walk-forward validation and stress testing with PyTest inside a CI/CD pipeline.'
   },
   {
     period: 'June 2025 — Present',
     company: 'UBC Science Undergraduate Society',
     role: 'Frontend Developer',
-    details: [
-      'Redesigned the Science Undergraduate Society website by implementing 5+ new pages and features',
-      'Engineered 10+ reusable components and introduced 15+ design tokens in Next.js/TypeScript'
-    ]
+    description: 'Redesigned the Science Undergraduate Society website by implementing 5+ new pages and features. Engineered 10+ reusable components and introduced 15+ design tokens in Next.js/TypeScript.'
   },
   {
     period: 'May 2025 — Present',
     company: 'UBC Actuarial Science Club',
     role: 'Frontend Engineer',
-    details: [
-      'Built the site with Next.js, React, and Tailwind CSS, increasing member sign-ups by 200%',
-      'Led planning and development of the club\'s first website'
-    ]
+    description: 'Built the site with Next.js, React, and Tailwind CSS, increasing member sign-ups by 200%. Led planning and development of the club\'s first website.'
   }
 ];
 
@@ -149,11 +136,7 @@ export default function StandardView() {
                     </div>
                     <span className="experience-role">{exp.role}</span>
                   </div>
-                  <ul className="experience-details">
-                    {exp.details.map((detail, i) => (
-                      <li key={i}>{detail}</li>
-                    ))}
-                  </ul>
+                  <p className="experience-description">{exp.description}</p>
                 </article>
               ))}
             </div>

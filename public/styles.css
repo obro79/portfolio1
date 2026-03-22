@@ -27,6 +27,57 @@
   --spacing-3xl: 4rem;
 }
 
+/* Theme: Dracula */
+[data-theme="dracula"] {
+  --bg: #282a36;
+  --bg-surface: #44475a;
+  --bg-elevated: #383a4a;
+  --text: #f8f8f2;
+  --text-dim: #6272a4;
+  --text-muted: #44475a;
+  --accent: #bd93f9;
+  --accent-dim: #9b6dff;
+  --accent-glow: rgba(189, 147, 249, 0.15);
+  --border: #6272a4;
+  --success: #50fa7b;
+  --error: #ff5555;
+  --warning: #f1fa8c;
+}
+
+/* Theme: Gruvbox */
+[data-theme="gruvbox"] {
+  --bg: #282828;
+  --bg-surface: #3c3836;
+  --bg-elevated: #504945;
+  --text: #ebdbb2;
+  --text-dim: #a89984;
+  --text-muted: #665c54;
+  --accent: #fe8019;
+  --accent-dim: #d65d0e;
+  --accent-glow: rgba(254, 128, 25, 0.15);
+  --border: #504945;
+  --success: #b8bb26;
+  --error: #fb4934;
+  --warning: #fabd2f;
+}
+
+/* Theme: Solarized */
+[data-theme="solarized"] {
+  --bg: #002b36;
+  --bg-surface: #073642;
+  --bg-elevated: #0a4050;
+  --text: #839496;
+  --text-dim: #657b83;
+  --text-muted: #586e75;
+  --accent: #2aa198;
+  --accent-dim: #268bd2;
+  --accent-glow: rgba(42, 161, 152, 0.15);
+  --border: #586e75;
+  --success: #859900;
+  --error: #dc322f;
+  --warning: #b58900;
+}
+
 /* Reset */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -486,28 +537,11 @@ a:hover {
   font-size: 13px;
 }
 
-.experience-details {
-  list-style: none;
-  padding-left: var(--spacing-md);
-}
-
-.experience-details li {
-  position: relative;
+.experience-description {
   color: var(--text-dim);
   font-size: 13px;
-  margin-bottom: var(--spacing-sm);
+  line-height: 1.6;
   padding-left: var(--spacing-md);
-}
-
-.experience-details li::before {
-  content: '|--';
-  position: absolute;
-  left: 0;
-  color: var(--text-muted);
-}
-
-.experience-details li:last-child::before {
-  content: "'--";
 }
 
 /* Projects Section */
@@ -794,13 +828,18 @@ a:hover {
   overflow-y: auto;
 }
 
-/* Minimized mode - just collapses content */
+/* Minimized mode - collapses to just the title bar */
 .terminal-minimized {
   min-height: auto !important;
+  height: auto !important;
 }
 
 .terminal-minimized .terminal-header {
   border-bottom: none;
+}
+
+.terminal-view:has(.terminal-minimized) {
+  min-height: auto;
 }
 
 .terminal-title {

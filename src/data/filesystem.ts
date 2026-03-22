@@ -12,34 +12,31 @@ const experienceContent = `┌────────────────�
 └─────────────────────────────────────────────────────────────┘
 
 [2025-09-01] Royal Bank of Canada
-├── Role: Quantitative Developer
-├── Status: Current
-└── Highlights:
-    ├── Migrated pricing engine from MATLAB to Python + Dask
-    ├── Sped up valuations by 70%, cut maintenance 50%+
-    └── Created onboarding docs, cutting onboarding time 50%
+  Role: Quantitative Developer | Status: Current
+  Optimized risk assessment by migrating pricing engine from MATLAB
+  to Python + Dask, deploying scalable pipelines that sped up
+  valuations 70% and cut maintenance 50%+. Created comprehensive
+  onboarding documentation using Confluence, cutting onboarding
+  time by 50%.
 
 [2025-01-01] Quantico Research
-├── Role: Quantitative Developer
-├── Status: Jan 2025 - May 2025
-└── Highlights:
-    ├── Built Hidden Markov Model in Stan with Python/NumPy
-    ├── Slashed seismic risk exposure by 80%
-    └── Automated testing with PyTest in CI/CD pipeline
+  Role: Quantitative Developer | Status: Jan 2025 - May 2025
+  Led development of a Hidden Markov Model in Stan with a
+  Python/NumPy interface, slashing seismic risk exposure by 80%.
+  Designed real-time seismic data pipelines in Python using NumPy
+  for vectorized data cleaning. Automated walk-forward validation
+  and stress testing with PyTest inside a CI/CD pipeline.
 
 [2025-06-01] UBC Science Undergraduate Society
-├── Role: Frontend Developer
-├── Status: Current
-└── Highlights:
-    ├── Redesigned website with 5+ new pages
-    └── Engineered 10+ reusable components in Next.js/TypeScript
+  Role: Frontend Developer | Status: Current
+  Redesigned website with 5+ new pages. Engineered 10+ reusable
+  components and introduced 15+ design tokens in Next.js/TypeScript.
 
 [2025-05-01] UBC Actuarial Science Club
-├── Role: Frontend Engineer
-├── Status: Current
-└── Highlights:
-    ├── Built site with Next.js, React, Tailwind CSS
-    └── Increased member sign-ups by 200%
+  Role: Frontend Engineer | Status: Current
+  Built site with Next.js, React, and Tailwind CSS, increasing
+  member sign-ups by 200%. Led planning and development of the
+  club's first website.
 `;
 
 const aboutContent = `┌─────────────────────────────────────────────────────────────┐
@@ -77,6 +74,41 @@ GitHub:   github.com/obro79
 LinkedIn: linkedin.com/in/fisherowen
 
 Run 'mailto' to open email client.
+`;
+
+const resumeContent = `┌─────────────────────────────────────────────────────────────┐
+│                    OWEN FISHER - RESUME                      │
+└─────────────────────────────────────────────────────────────┘
+
+EDUCATION
+  University of British Columbia                    2023 - 2027
+  B.Sc. Combined Major in Computer Science & Statistics
+
+EXPERIENCE
+  Royal Bank of Canada — Quantitative Developer   Sept. 2025 -
+    Migrated pricing engine from MATLAB to Python + Dask,
+    deploying scalable pipelines that sped up valuations 70%
+    and cut maintenance 50%+.
+
+  Quantico Research — Quantitative Developer     Jan. - May 2025
+    Built Hidden Markov Model in Stan with Python/NumPy,
+    slashing seismic risk exposure by 80%. Designed real-time
+    seismic data pipelines with vectorized cleaning.
+
+  UBC Science Undergrad Society — Frontend Dev    June 2025 -
+    Redesigned website with 5+ new pages, engineered 10+
+    reusable components in Next.js/TypeScript.
+
+SKILLS
+  Languages:   Python, TypeScript, JavaScript, Java, SQL
+  Frameworks:  Next.js, React, Flask, NumPy, Pandas, Dask
+  Tools:       Git, Docker, CI/CD, PostgreSQL, Redis, Kafka
+  Focus:       Quantitative Finance, Backend Engineering
+
+LINKS
+  GitHub:      https://github.com/obro79
+  LinkedIn:    https://linkedin.com/in/fisherowen
+  Email:       owenfisher46@gmail.com
 `;
 
 // Helper to wrap text to a max width
@@ -178,6 +210,11 @@ export const fileSystem: FileSystemNode = {
       type: 'file',
       name: 'contact.txt',
       content: contactContent
+    },
+    'resume.txt': {
+      type: 'file',
+      name: 'resume.txt',
+      content: resumeContent
     },
     'projects': {
       type: 'directory',

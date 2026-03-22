@@ -40,12 +40,12 @@ const createInitialSnakeState = (): SnakeGameState => ({
   started: false,
 });
 
-const ASCII_NAME = ` ██████╗ ██╗    ██╗███████╗███╗   ██╗
-██╔═══██╗██║    ██║██╔════╝████╗  ██║
-██║   ██║██║ █╗ ██║█████╗  ██╔██╗ ██║
-██║   ██║██║███╗██║██╔══╝  ██║╚██╗██║
-╚██████╔╝╚███╔███╔╝███████╗██║ ╚████║
- ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝`;
+const ASCII_NAME = ` ██████╗ ██╗    ██╗███████╗███╗   ██╗    ███████╗██╗███████╗██╗  ██╗███████╗██████╗
+██╔═══██╗██║    ██║██╔════╝████╗  ██║    ██╔════╝██║██╔════╝██║  ██║██╔════╝██╔══██╗
+██║   ██║██║ █╗ ██║█████╗  ██╔██╗ ██║    █████╗  ██║███████╗███████║█████╗  ██████╔╝
+██║   ██║██║███╗██║██╔══╝  ██║╚██╗██║    ██╔══╝  ██║╚════██║██╔══██║██╔══╝  ██╔══██╗
+╚██████╔╝╚███╔███╔╝███████╗██║ ╚████║    ██║     ██║███████║██║  ██║███████╗██║  ██║
+ ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝`;
 
 const WELCOME_TEXT = `
 Welcome to Owen Fisher's interactive terminal portfolio.
@@ -83,6 +83,13 @@ function linkifyText(text: string): (string | React.ReactElement)[] {
   });
 }
 
+const COMMANDS = [
+  'help', 'clear', 'pwd', 'ls', 'cd', 'cat', 'whoami', 'contact',
+  'mailto', 'sudo', 'echo', 'date', 'neofetch', 'npm', 'nrd',
+  'history', 'tree', 'git', 'fortune', 'cowsay', 'snake', 'coffee',
+  'sl', 'rm', 'vim', 'exit', 'theme', 'run', 'resume', 'make',
+];
+
 const HELP_TEXT = `
 NAVIGATION
   ls [dir]      List directory contents
@@ -94,17 +101,21 @@ NAVIGATION
 PORTFOLIO
   whoami        About me
   contact       Contact information
+  resume        View resume (also: cat resume.txt)
   mailto        Open email client
 
 RUN PROJECTS (cd into projects/<name> first)
   npm run dev   Launch project in StackBlitz IDE
   npm install   Install dependencies
   nrd           Shortcut for npm run dev
+  run flux      Live Flux pipeline demo
 
 DEVELOPER TOOLS
   neofetch      System info
+  git log       Live GitHub activity feed
   git status    Check repo status
   git blame     Who wrote this?
+  theme [name]  Switch color scheme
   fortune       Programming wisdom
   history       Command history
 
@@ -116,13 +127,13 @@ TRY THESE
   fortune  git blame  sudo hire-owen
 
 SHORTCUTS
-  Tab           Autocomplete
+  Tab           Autocomplete commands & paths
   Up/Down       Command history
   Ctrl+L        Clear screen
   Ctrl+C        Cancel input
   clear         Clear terminal
 
-Try: cd projects/prepme && npm run dev
+Try: cd projects/rehabify && cat README.md
 `;
 
 interface TerminalViewProps {
@@ -141,6 +152,8 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [stackblitzProject, setStackblitzProject] = useState<Project | null>(null);
+  const [theme, setTheme] = useState<string>('default');
+  const fluxDemoRef = useRef<NodeJS.Timeout | null>(null);
 
   // Snake game state
   const [isPlayingSnake, setIsPlayingSnake] = useState(false);
@@ -176,7 +189,14 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
   };
 
   const handleMinimize = () => {
-    setIsMinimized(!isMinimized);
+    if (document.fullscreenElement) {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+        setIsMinimized(true);
+      });
+    } else {
+      setIsMinimized(!isMinimized);
+    }
   };
 
   // Snake game functions
@@ -328,7 +348,30 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
 
   useEffect(() => {
     inputRef.current?.focus();
+    const saved = localStorage.getItem('terminal-theme');
+    if (saved) {
+      setTheme(saved);
+      if (saved === 'default') {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    }
+    const savedAccent = localStorage.getItem('terminal-accent');
+    if (savedAccent) {
+      document.documentElement.style.setProperty('--accent', savedAccent);
+      document.documentElement.style.setProperty('--accent-glow', `${savedAccent}26`);
+    }
   }, []);
+
+  useEffect(() => {
+    if (theme === 'default') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+    localStorage.setItem('terminal-theme', theme);
+  }, [theme]);
 
   // Snake game keyboard controls
   useEffect(() => {
@@ -596,21 +639,32 @@ export default function TerminalView({ onClose }: TerminalViewProps) {
         addLine('output', new Date().toString());
         break;
 
-      case 'neofetch':
+      case 'neofetch': {
+        const hackathonCount = projects.filter(p => p.categories.includes('hackathon')).length;
         addLine('output', `
-        .--.         visitor@owenfisher.dev
-       |o_o |        -----------------------
-       |:_/ |        OS: Portfolio OS v1.0
-      //   \\ \\       Host: owenfisher.dev
-     (|     | )      Kernel: Next.js 15.5.4
-    /'\\_   _/\`\\      Shell: terminal.tsx
-    \\___)=(___/      Theme: Cyan Terminal
-
-                     Uptime: Since 2025
-                     Projects: 7
-                     Languages: TypeScript, Python, Java
+         .oOOo.         visitor@owenfisher.dev
+        oO    Oo        ──────────────────────────
+       oO      Oo       OS:         Portfolio OS v2.0
+       oO      Oo       Host:       owenfisher.dev
+        oO    Oo        Kernel:     Next.js 15
+         'oOOo'         Shell:      terminal.tsx
+      .oOOOOOOOo.       Theme:      ${theme}
+     oO          Oo     Uptime:     Since Jan 2025
+                         ──────────────────────────
+                         Role:       Quantitative Developer @ RBC
+                         Location:   Vancouver, BC
+                         Education:  UBC CS + Stats
+                         ──────────────────────────
+                         Languages:  Python, TS, JS, Java, SQL
+                         Frameworks: Next.js, React, Flask, NumPy
+                         Tools:      Git, Docker, CI/CD, PostgreSQL
+                         Projects:   ${projects.length}
+                         Hackathons: ${hackathonCount}
+                         ──────────────────────────
+                         ████████████████████████
 `);
         break;
+      }
 
       case 'npm': {
         // Handle npm commands
@@ -733,6 +787,95 @@ Pro tip: Never run 'rm -rf /' on a real system.
         break;
       }
 
+      case 'resume': {
+        const resumeNode = getNode(['resume.txt']);
+        if (resumeNode?.content) {
+          addLine('output', resumeNode.content);
+          addLine('success', 'Download PDF: https://owenfisher.dev/Owen_Fisher_Resume.pdf');
+        }
+        break;
+      }
+
+      case 'theme': {
+        const themes = ['default', 'dracula', 'gruvbox', 'solarized'];
+        if (!args[0]) {
+          addLine('output', `Current theme: ${theme}\nAvailable: ${themes.join(', ')}\n\nUsage:\n  theme <name>           Switch theme\n  theme accent <color>   Set custom accent color (hex or name)`);
+        } else if (args[0] === 'accent') {
+          const color = args[1];
+          if (!color) {
+            addLine('error', 'Usage: theme accent <color>  (e.g. #ff6600, cyan, hotpink)');
+          } else {
+            document.documentElement.style.setProperty('--accent', color);
+            document.documentElement.style.setProperty('--accent-glow', `${color}26`);
+            localStorage.setItem('terminal-accent', color);
+            addLine('success', `Accent color set to '${color}'`);
+          }
+        } else if (args[0] === 'reset') {
+          document.documentElement.style.removeProperty('--accent');
+          document.documentElement.style.removeProperty('--accent-glow');
+          localStorage.removeItem('terminal-accent');
+          addLine('success', 'Accent color reset to theme default');
+        } else if (themes.includes(args[0].toLowerCase())) {
+          const newTheme = args[0].toLowerCase();
+          setTheme(newTheme);
+          document.documentElement.style.removeProperty('--accent');
+          document.documentElement.style.removeProperty('--accent-glow');
+          localStorage.removeItem('terminal-accent');
+          addLine('success', `Theme changed to '${newTheme}'`);
+        } else {
+          addLine('error', `theme: '${args[0]}' not found. Available: ${themes.join(', ')}\nOr try: theme accent <color>`);
+        }
+        break;
+      }
+
+      case 'run': {
+        if (args[0] === 'flux') {
+          // Flux pipeline demo
+          addLine('ascii', `
+  ╔═══════════════════════════════════════╗
+  ║          FLUX DATA PIPELINE           ║
+  ╚═══════════════════════════════════════╝`);
+
+          const steps = [
+            { delay: 400, type: 'output' as const, msg: '[docker] Starting services...' },
+            { delay: 800, type: 'success' as const, msg: '[docker] ✓ PostgreSQL    :5432  ready' },
+            { delay: 1200, type: 'success' as const, msg: '[docker] ✓ Redis         :6379  ready' },
+            { delay: 1600, type: 'success' as const, msg: '[docker] ✓ Redpanda      :9092  ready' },
+            { delay: 2000, type: 'success' as const, msg: '[docker] ✓ FastAPI       :8000  ready' },
+            { delay: 2600, type: 'output' as const, msg: '\n[kafka] Streaming events to topic: flux.events' },
+            { delay: 3000, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=a3f2c1 type=page_view    user=usr_8472 latency=4ms` },
+            { delay: 3300, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=b7e4d2 type=purchase     user=usr_1293 latency=7ms` },
+            { delay: 3600, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=c1a9f3 type=signup       user=usr_5841 latency=3ms` },
+            { delay: 3900, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=d5b2e4 type=page_view    user=usr_3017 latency=5ms` },
+            { delay: 4200, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=e8c3f5 type=click        user=usr_6294 latency=2ms` },
+            { delay: 4800, type: 'output' as const, msg: '\n[kafka] Partition throughput:' },
+            { delay: 5200, type: 'output' as const, msg: '  P0  ████████████████████░░░░  12,847 msg/s' },
+            { delay: 5400, type: 'output' as const, msg: '  P1  ███████████████████░░░░░  11,923 msg/s' },
+            { delay: 5600, type: 'output' as const, msg: '  P2  █████████████████████░░░  14,102 msg/s' },
+            { delay: 6200, type: 'output' as const, msg: '\n[consumer] Consumer group: flux-consumers' },
+            { delay: 6500, type: 'output' as const, msg: '  Consumer 0  lag: 12 → 4 → 0' },
+            { delay: 6800, type: 'output' as const, msg: '  Consumer 1  lag: 8 → 2 → 0' },
+            { delay: 7100, type: 'output' as const, msg: '  Consumer 2  lag: 15 → 6 → 0' },
+            { delay: 7800, type: 'success' as const, msg: '\n[pipeline] Summary:' },
+            { delay: 8000, type: 'success' as const, msg: '  Events processed:  38,872' },
+            { delay: 8200, type: 'success' as const, msg: '  Avg latency:       4.2ms' },
+            { delay: 8400, type: 'success' as const, msg: '  Throughput:        38,872 events/sec' },
+            { delay: 8600, type: 'success' as const, msg: '  Status:            All consumers caught up' },
+            { delay: 9000, type: 'output' as const, msg: '\n  GitHub: https://github.com/obro79/Flux' },
+          ];
+
+          steps.forEach(step => {
+            const t = setTimeout(() => addLine(step.type, step.msg), step.delay);
+            if (!fluxDemoRef.current) fluxDemoRef.current = t;
+          });
+        } else if (args[0]) {
+          addLine('error', `run: unknown target '${args[0]}'. Try: run flux`);
+        } else {
+          addLine('error', 'run: missing target. Try: run flux');
+        }
+        break;
+      }
+
       case 'git': {
         if (args[0] === 'blame') {
           addLine('output', `
@@ -751,8 +894,42 @@ Your branch is up to date with 'origin/main'.
 
 nothing to commit, working tree clean
 
-(This portfolio is always in a perfect state 😎)
+(This portfolio is always in a perfect state)
 `);
+        } else if (args[0] === 'log') {
+          addLine('output', 'Fetching recent GitHub activity...');
+          fetch('https://api.github.com/users/obro79/events/public?per_page=10')
+            .then(res => res.json())
+            .then((events: any[]) => {
+              const formatted = events.slice(0, 10).map(event => {
+                const date = new Date(event.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const repo = event.repo.name.replace('obro79/', '');
+                let action = event.type;
+                if (event.type === 'PushEvent') {
+                  const commits = event.payload?.commits?.length || 0;
+                  action = `pushed ${commits} commit(s)`;
+                } else if (event.type === 'CreateEvent') {
+                  action = `created ${event.payload?.ref_type || 'ref'}`;
+                } else if (event.type === 'PullRequestEvent') {
+                  action = `${event.payload?.action || 'updated'} PR`;
+                } else if (event.type === 'IssuesEvent') {
+                  action = `${event.payload?.action || 'updated'} issue`;
+                } else if (event.type === 'WatchEvent') {
+                  action = 'starred';
+                } else if (event.type === 'ForkEvent') {
+                  action = 'forked';
+                } else if (event.type === 'DeleteEvent') {
+                  action = `deleted ${event.payload?.ref_type || 'ref'}`;
+                }
+                return `  ${date.padEnd(8)} ${action.padEnd(25)} ${repo}`;
+              }).join('\n');
+
+              const header = `  DATE     ACTION                    REPO\n  ${'─'.repeat(55)}`;
+              addLine('output', header + '\n' + (formatted || '  No recent activity'));
+            })
+            .catch(() => {
+              addLine('error', 'Failed to fetch GitHub activity. Try again later.');
+            });
         } else {
           addLine('error', `git: '${args[0]}' is not available in this terminal`);
         }
@@ -822,18 +999,63 @@ nothing to commit, working tree clean
       }
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      // Simple tab completion
       const parts = currentInput.split(/\s+/);
-      const lastPart = parts[parts.length - 1];
-      if (lastPart) {
-        const targetDir = parts.length > 1 && parts[0] === 'cd' ? currentDir : currentDir;
-        const items = listDirectory(targetDir);
-        const matches = items.filter(item => item.startsWith(lastPart));
+      const lastPart = parts[parts.length - 1] || '';
+
+      const getCommonPrefix = (arr: string[]): string => {
+        if (arr.length === 0) return '';
+        let prefix = arr[0];
+        for (let i = 1; i < arr.length; i++) {
+          while (!arr[i].startsWith(prefix)) {
+            prefix = prefix.slice(0, -1);
+          }
+        }
+        return prefix;
+      };
+
+      if (parts.length <= 1) {
+        // Command completion
+        const matches = COMMANDS.filter(c => c.startsWith(lastPart));
         if (matches.length === 1) {
-          parts[parts.length - 1] = matches[0];
-          setCurrentInput(parts.join(' '));
+          setCurrentInput(matches[0] + ' ');
         } else if (matches.length > 1) {
           addLine('output', matches.join('  '));
+          const prefix = getCommonPrefix(matches);
+          if (prefix.length > lastPart.length) setCurrentInput(prefix);
+        }
+      } else {
+        // Path completion
+        const pathParts = lastPart.split('/');
+        const partial = pathParts.pop() || '';
+        const dirPath = pathParts.length > 0
+          ? resolvePath(pathParts.join('/'), currentDir)
+          : currentDir;
+        const items = listDirectory(dirPath);
+        const matches = items.filter(item => item.startsWith(partial));
+
+        // For cd, filter to directories only
+        const filtered = parts[0] === 'cd'
+          ? matches.filter(m => getNode([...dirPath, m])?.type === 'directory')
+          : matches;
+
+        if (filtered.length === 1) {
+          const match = filtered[0];
+          const isDir = getNode([...dirPath, match])?.type === 'directory';
+          const completed = pathParts.length > 0
+            ? pathParts.join('/') + '/' + match
+            : match;
+          parts[parts.length - 1] = completed + (isDir ? '/' : '');
+          setCurrentInput(parts.join(' '));
+        } else if (filtered.length > 1) {
+          addLine('output', filtered.join('  '));
+          const prefix = getCommonPrefix(filtered);
+          if (prefix.length > partial.length) {
+            const completed = pathParts.length > 0
+              ? pathParts.join('/') + '/' + prefix
+              : prefix;
+            parts[parts.length - 1] = completed;
+            setCurrentInput(parts.join(' '));
+          }
         }
       }
     } else if (e.key === 'l' && e.ctrlKey) {
