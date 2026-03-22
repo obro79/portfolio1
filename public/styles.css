@@ -337,8 +337,8 @@ a:hover {
 
 .market-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: var(--spacing-sm);
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-md);
 }
 
 .market-card {
@@ -1057,6 +1057,10 @@ a:hover {
 
   .projects-grid {
     grid-template-columns: 1fr;
+  }
+
+  .market-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .experience-header {
