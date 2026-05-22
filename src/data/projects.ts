@@ -13,6 +13,7 @@ export interface Project {
   visual: {
     type: 'terminal' | 'architecture' | 'product';
     title: string;
+    variant?: 'pipeline';
     image?: string;
     imageAlt?: string;
     media?: {
@@ -21,6 +22,15 @@ export interface Project {
       alt: string;
     }[];
     lines: string[];
+    stages?: {
+      label: string;
+      detail: string;
+    }[];
+    flows?: {
+      from: string;
+      to: string;
+      label: string;
+    }[];
   };
   links: {
     github?: string;
@@ -56,12 +66,27 @@ export const projects: Project[] = [
     visual: {
       type: 'architecture',
       title: 'pipeline topology',
+      variant: 'pipeline',
+      stages: [
+        { label: 'Exchanges', detail: 'Coinbase + Kraken feeds' },
+        { label: 'Adapters', detail: 'normalize trade schema' },
+        { label: 'Kafka', detail: 'market_trades topic' },
+        { label: 'Consumers', detail: 'candles + indicators' },
+        { label: 'Storage', detail: 'Postgres + Redis' },
+        { label: 'API', detail: 'FastAPI REST + WebSocket' }
+      ],
+      flows: [
+        { from: 'Kafka', to: 'PostgreSQL', label: 'candle windows' },
+        { from: 'Kafka', to: 'Redis', label: 'live indicators' },
+        { from: 'API', to: 'Prometheus', label: 'latency + lag metrics' },
+        { from: 'Prometheus', to: 'Grafana', label: 'dashboards + alerts' }
+      ],
       lines: [
-        'Coinbase/Kraken -> adapters -> Kafka: market_trades',
-        'market_trades -> candle consumer -> PostgreSQL',
-        'market_trades -> indicator engine -> Redis',
-        'FastAPI -> /markets /candles /crypto /indicators',
-        'Prometheus -> Grafana panels + alert rules'
+        'docker compose up --build',
+        'adapters publish market_trades',
+        'consumers write candles + indicators',
+        'api exposes /markets /candles /indicators',
+        'prometheus scrapes api + consumer lag'
       ]
     },
     links: {

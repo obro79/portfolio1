@@ -337,7 +337,60 @@ function ProjectVisual({ project }: { project: Project }) {
           )}
         </div>
       )}
-      <pre>{project.visual.lines.join('\n')}</pre>
+      {project.visual.variant === 'pipeline' && project.visual.stages ? (
+        <PipelineVisual
+          stages={project.visual.stages}
+          flows={project.visual.flows || []}
+          lines={project.visual.lines}
+        />
+      ) : (
+        <pre>{project.visual.lines.join('\n')}</pre>
+      )}
+    </div>
+  );
+}
+
+function PipelineVisual({
+  stages,
+  flows,
+  lines
+}: {
+  stages: NonNullable<Project['visual']['stages']>;
+  flows: NonNullable<Project['visual']['flows']>;
+  lines: string[];
+}) {
+  return (
+    <div className="pipeline-visual" aria-label="Pipeline architecture">
+      <div className="pipeline-main">
+        {stages.map((stage, index) => (
+          <div className="pipeline-stage" key={stage.label}>
+            <div className="pipeline-stage-node">
+              <span>{stage.label}</span>
+              <small>{stage.detail}</small>
+            </div>
+            {index < stages.length - 1 && <span className="pipeline-arrow">-&gt;</span>}
+          </div>
+        ))}
+      </div>
+
+      <div className="pipeline-flows">
+        {flows.map((flow) => (
+          <div className="pipeline-flow" key={`${flow.from}-${flow.to}-${flow.label}`}>
+            <span className="pipeline-flow-from">{flow.from}</span>
+            <span className="pipeline-flow-line" />
+            <span className="pipeline-flow-to">{flow.to}</span>
+            <span className="pipeline-flow-label">{flow.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="pipeline-console">
+        {lines.map((line) => (
+          <span key={line}>
+            <span className="term-accent">$</span> {line}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
