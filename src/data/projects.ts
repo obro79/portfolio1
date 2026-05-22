@@ -15,6 +15,11 @@ export interface Project {
     title: string;
     image?: string;
     imageAlt?: string;
+    media?: {
+      src: string;
+      title: string;
+      alt: string;
+    }[];
     lines: string[];
   };
   links: {
@@ -145,8 +150,14 @@ export const projects: Project[] = [
     visual: {
       type: 'architecture',
       title: 'trust boundary',
-      image: '/projects/maintaineros-devpost.png',
-      imageAlt: 'MaintainerOS Devpost project thumbnail',
+      image: '/projects/maintaineros-home.png',
+      imageAlt: 'MaintainerOS homepage screenshot',
+      media: [
+        { src: '/projects/maintaineros-home.png', title: 'home', alt: 'MaintainerOS homepage screenshot' },
+        { src: '/projects/maintaineros-connect.png', title: 'connect', alt: 'MaintainerOS GitHub connect screenshot' },
+        { src: '/projects/maintaineros-docs.png', title: 'docs', alt: 'MaintainerOS docs screenshot' },
+        { src: '/projects/maintaineros-devpost.png', title: 'devpost', alt: 'MaintainerOS Devpost thumbnail' }
+      ],
       lines: [
         'issue -> route -> context pack',
         'context pack -> agent attempt or contributor task',
@@ -177,8 +188,14 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'application pipeline',
-      image: '/projects/recruit-devpost.png',
-      imageAlt: 'Recruit Devpost project thumbnail',
+      image: '/projects/recruit-dashboard.png',
+      imageAlt: 'Recruit dashboard screenshot',
+      media: [
+        { src: '/projects/recruit-dashboard.png', title: 'dashboard', alt: 'Recruit dashboard screenshot' },
+        { src: '/projects/recruit-queue.png', title: 'queue', alt: 'Recruit applications queue screenshot' },
+        { src: '/projects/recruit-architecture.png', title: 'system', alt: 'Recruit system architecture diagram' },
+        { src: '/projects/recruit-devpost.png', title: 'devpost', alt: 'Recruit Devpost thumbnail' }
+      ],
       lines: [
         'ingest ats_feeds --limit 500',
         'filter hard_mismatches',
@@ -211,8 +228,13 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'live coaching loop',
-      image: '/projects/rehabify-devpost.png',
-      imageAlt: 'Rehabify Devpost project thumbnail',
+      image: '/projects/rehabify-landing.png',
+      imageAlt: 'Rehabify landing page screenshot',
+      media: [
+        { src: '/projects/rehabify-landing.png', title: 'landing', alt: 'Rehabify landing page screenshot' },
+        { src: '/projects/rehabify-demo.webp', title: 'demo', alt: 'Rehabify exercise demo image' },
+        { src: '/projects/rehabify-devpost.png', title: 'devpost', alt: 'Rehabify Devpost thumbnail' }
+      ],
       lines: [
         'camera frame -> pose landmarks',
         'voice prompt -> STT transcript',

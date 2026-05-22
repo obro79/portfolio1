@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Project, projectCategories } from '../../data/projects';
 
 const ASCII_NAME = `
@@ -285,18 +286,48 @@ function ProjectActions({
 }
 
 function ProjectVisual({ project }: { project: Project }) {
+  const media = project.visual.media || (
+    project.visual.image
+      ? [{ src: project.visual.image, title: project.visual.title, alt: project.visual.imageAlt || `${project.title} preview` }]
+      : []
+  );
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const activeMedia = media[activeMediaIndex] || media[0];
+
+  useEffect(() => {
+    setActiveMediaIndex(0);
+  }, [project.id]);
+
   return (
     <div className={`project-visual project-visual-${project.visual.type}`}>
       <div className="project-visual-header">
-        <span>{project.visual.title}</span>
+        <span>{activeMedia?.title || project.visual.title}</span>
         <span>{project.visual.type}</span>
       </div>
-      {project.visual.image && (
-        <img
-          src={project.visual.image}
-          alt={project.visual.imageAlt || `${project.title} preview`}
-          className="project-visual-image"
-        />
+      {activeMedia && (
+        <div className="project-media">
+          <img
+            src={activeMedia.src}
+            alt={activeMedia.alt}
+            className="project-visual-image"
+          />
+          {media.length > 1 && (
+            <div className="project-media-strip" aria-label={`${project.title} media`}>
+              {media.slice(0, 4).map((item, index) => (
+                <button
+                  key={item.src}
+                  className={`project-media-thumb ${index === activeMediaIndex ? 'active' : ''}`}
+                  onClick={() => setActiveMediaIndex(index)}
+                  aria-label={`Show ${item.title}`}
+                  type="button"
+                >
+                  <img src={item.src} alt="" />
+                  <span>{item.title}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       )}
       <pre>{project.visual.lines.join('\n')}</pre>
     </div>
