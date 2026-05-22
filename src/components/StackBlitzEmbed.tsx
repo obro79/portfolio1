@@ -12,14 +12,18 @@ export default function StackBlitzEmbed({ repo, openFile, startScript, onClose }
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const embedInitiated = useRef(false);
 
   useEffect(() => {
-    // Prevent double-embedding in React strict mode
-    if (embedInitiated.current) return;
-    if (!containerRef.current) return;
+    const host = containerRef.current;
+    if (!host) return undefined;
 
-    embedInitiated.current = true;
+    let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    host.replaceChildren();
+    const embedTarget = document.createElement('div');
+    embedTarget.className = 'stackblitz-embed-target';
+    host.appendChild(embedTarget);
 
     const embedProject = async () => {
       try {
@@ -27,7 +31,7 @@ export default function StackBlitzEmbed({ repo, openFile, startScript, onClose }
         setError(null);
 
         await sdk.embedGithubProject(
-          containerRef.current!,
+          embedTarget,
           repo,
           {
             openFile: openFile || 'README.md',
@@ -39,15 +43,26 @@ export default function StackBlitzEmbed({ repo, openFile, startScript, onClose }
           }
         );
 
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load project');
-        setIsLoading(false);
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to load project');
+          setIsLoading(false);
+        }
       }
     };
 
-    // Small delay to ensure DOM is ready
-    setTimeout(embedProject, 100);
+    timeoutId = setTimeout(embedProject, 100);
+
+    return () => {
+      cancelled = true;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      host.replaceChildren();
+    };
   }, [repo, openFile, startScript]);
 
   // Handle ESC key
@@ -108,7 +123,6 @@ export default function StackBlitzEmbed({ repo, openFile, startScript, onClose }
           <div
             ref={containerRef}
             className="stackblitz-iframe-container"
-            data-loading={isLoading ? 'true' : 'false'}
           />
         </div>
       </div>
