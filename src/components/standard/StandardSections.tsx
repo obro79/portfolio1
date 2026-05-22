@@ -337,10 +337,9 @@ function ProjectVisual({ project }: { project: Project }) {
           )}
         </div>
       )}
-      {project.visual.variant === 'pipeline' && project.visual.stages ? (
+      {project.visual.variant === 'pipeline' && project.visual.diagram ? (
         <PipelineVisual
-          stages={project.visual.stages}
-          flows={project.visual.flows || []}
+          diagram={project.visual.diagram}
           lines={project.visual.lines}
         />
       ) : (
@@ -351,37 +350,36 @@ function ProjectVisual({ project }: { project: Project }) {
 }
 
 function PipelineVisual({
-  stages,
-  flows,
+  diagram,
   lines
 }: {
-  stages: NonNullable<Project['visual']['stages']>;
-  flows: NonNullable<Project['visual']['flows']>;
+  diagram: NonNullable<Project['visual']['diagram']>;
   lines: string[];
 }) {
-  return (
-    <div className="pipeline-visual" aria-label="Pipeline architecture">
-      <div className="pipeline-main">
-        {stages.map((stage, index) => (
-          <div className="pipeline-stage" key={stage.label}>
-            <div className="pipeline-stage-node">
-              <span>{stage.label}</span>
-              <small>{stage.detail}</small>
-            </div>
-            {index < stages.length - 1 && <span className="pipeline-arrow">-&gt;</span>}
-          </div>
-        ))}
-      </div>
+  const nodeById = new Map(diagram.nodes.map((node) => [node.id, node]));
 
-      <div className="pipeline-flows">
-        {flows.map((flow) => (
-          <div className="pipeline-flow" key={`${flow.from}-${flow.to}-${flow.label}`}>
-            <span className="pipeline-flow-from">{flow.from}</span>
-            <span className="pipeline-flow-line" />
-            <span className="pipeline-flow-to">{flow.to}</span>
-            <span className="pipeline-flow-label">{flow.label}</span>
-          </div>
-        ))}
+  return (
+    <div className="pipeline-visual" aria-label="Pipeline architecture diagram">
+      <div className="pipeline-diagram">
+        <div className="pipeline-graph">
+          {diagram.nodes.map((node) => (
+            <div className={`pipeline-node pipeline-node-${node.lane}`} key={node.id}>
+              <span>{node.label}</span>
+              <small>{node.detail}</small>
+            </div>
+          ))}
+        </div>
+
+        <div className="pipeline-edge-list">
+          {diagram.edges.map((edge) => (
+            <div className="pipeline-edge" key={`${edge.from}-${edge.to}-${edge.label}`}>
+              <span>{nodeById.get(edge.from)?.label || edge.from}</span>
+              <span className="pipeline-edge-arrow">-&gt;</span>
+              <span>{nodeById.get(edge.to)?.label || edge.to}</span>
+              <small>{edge.label}</small>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="pipeline-console">

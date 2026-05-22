@@ -31,6 +31,19 @@ export interface Project {
       to: string;
       label: string;
     }[];
+    diagram?: {
+      nodes: {
+        id: string;
+        label: string;
+        detail: string;
+        lane: 'source' | 'stream' | 'compute' | 'storage' | 'api' | 'observability';
+      }[];
+      edges: {
+        from: string;
+        to: string;
+        label: string;
+      }[];
+    };
   };
   links: {
     github?: string;
@@ -67,20 +80,32 @@ export const projects: Project[] = [
       type: 'architecture',
       title: 'pipeline topology',
       variant: 'pipeline',
-      stages: [
-        { label: 'Exchanges', detail: 'Coinbase + Kraken feeds' },
-        { label: 'Adapters', detail: 'normalize trade schema' },
-        { label: 'Kafka', detail: 'market_trades topic' },
-        { label: 'Consumers', detail: 'candles + indicators' },
-        { label: 'Storage', detail: 'Postgres + Redis' },
-        { label: 'API', detail: 'FastAPI REST + WebSocket' }
-      ],
-      flows: [
-        { from: 'Kafka', to: 'PostgreSQL', label: 'candle windows' },
-        { from: 'Kafka', to: 'Redis', label: 'live indicators' },
-        { from: 'API', to: 'Prometheus', label: 'latency + lag metrics' },
-        { from: 'Prometheus', to: 'Grafana', label: 'dashboards + alerts' }
-      ],
+      diagram: {
+        nodes: [
+          { id: 'exchanges', label: 'Coinbase / Kraken', detail: 'exchange feeds', lane: 'source' },
+          { id: 'adapters', label: 'Adapters', detail: 'normalize trades', lane: 'compute' },
+          { id: 'kafka', label: 'Kafka', detail: 'market_trades', lane: 'stream' },
+          { id: 'candles', label: 'Candle Consumer', detail: 'OHLC windows', lane: 'compute' },
+          { id: 'postgres', label: 'PostgreSQL', detail: 'durable candles', lane: 'storage' },
+          { id: 'indicators', label: 'Indicator Engine', detail: 'live signals', lane: 'compute' },
+          { id: 'redis', label: 'Redis', detail: 'hot indicator cache', lane: 'storage' },
+          { id: 'fastapi', label: 'FastAPI', detail: '/markets /candles /crypto /indicators', lane: 'api' },
+          { id: 'prometheus', label: 'Prometheus', detail: 'latency + lag metrics', lane: 'observability' },
+          { id: 'grafana', label: 'Grafana', detail: 'panels + alert rules', lane: 'observability' }
+        ],
+        edges: [
+          { from: 'exchanges', to: 'adapters', label: 'raw ticks' },
+          { from: 'adapters', to: 'kafka', label: 'publish trades' },
+          { from: 'kafka', to: 'candles', label: 'consume trades' },
+          { from: 'candles', to: 'postgres', label: 'persist candles' },
+          { from: 'kafka', to: 'indicators', label: 'consume trades' },
+          { from: 'indicators', to: 'redis', label: 'cache signals' },
+          { from: 'postgres', to: 'fastapi', label: 'historical reads' },
+          { from: 'redis', to: 'fastapi', label: 'live reads' },
+          { from: 'fastapi', to: 'prometheus', label: 'scrape metrics' },
+          { from: 'prometheus', to: 'grafana', label: 'alert queries' }
+        ]
+      },
       lines: [
         'docker compose up --build',
         'adapters publish market_trades',
