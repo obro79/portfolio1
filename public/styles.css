@@ -1351,20 +1351,6 @@ a:hover {
   overflow-y: auto;
 }
 
-/* Minimized mode - collapses to just the title bar */
-.terminal-minimized {
-  min-height: auto !important;
-  height: auto !important;
-}
-
-.terminal-minimized .terminal-header {
-  border-bottom: none;
-}
-
-.terminal-view:has(.terminal-minimized) {
-  min-height: auto;
-}
-
 .terminal-title {
   flex: 1;
   text-align: center;

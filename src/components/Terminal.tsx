@@ -120,7 +120,6 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isMinimized, setIsMinimized] = useState(false);
   const [stackblitzProject, setStackblitzProject] = useState<Project | null>(null);
   const [theme, setTheme] = useState<string>('default');
   const [selectedProjectId, setSelectedProjectId] = useState(projects[0]?.id || 'flux');
@@ -156,17 +155,6 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
   const handleClose = () => {
     if (onClose) {
       onClose();
-    }
-  };
-
-  const handleMinimize = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen().then(() => {
-        setIsFullscreen(false);
-        setIsMinimized(true);
-      });
-    } else {
-      setIsMinimized(!isMinimized);
     }
   };
 
@@ -1204,7 +1192,7 @@ nothing to commit, working tree clean
       onClick={handleContainerClick}
       ref={containerRef}
     >
-      <div className={`terminal-container ${isMinimized ? 'terminal-minimized' : ''}`}>
+      <div className="terminal-container">
         <div className="terminal-header">
           <div className="terminal-dots">
             <button
@@ -1212,12 +1200,6 @@ nothing to commit, working tree clean
               onClick={(e) => { e.stopPropagation(); handleClose(); }}
               title="Exit to GUI mode"
               aria-label="Close terminal"
-            />
-            <button
-              className="terminal-dot yellow"
-              onClick={(e) => { e.stopPropagation(); handleMinimize(); }}
-              title={isMinimized ? "Restore" : "Minimize"}
-              aria-label="Minimize terminal"
             />
             <button
               className="terminal-dot green"
@@ -1229,61 +1211,57 @@ nothing to commit, working tree clean
           <span className="terminal-title">visitor@owenfisher.dev — terminal</span>
         </div>
 
-        {!isMinimized && (
-          <>
-            <div className="terminal-workspace">
-              <div className="terminal-body" ref={outputRef}>
-                {isPlayingSnake ? (
-                  <div className="terminal-output">
-                    <div className="terminal-line term-accent terminal-line-pre">
-                      {renderSnakeBoard()}
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="terminal-output">
-                      {lines.map((line, index) => (
-                        <div
-                          key={index}
-                          className={`terminal-line ${line.type === 'error' ? 'term-error' : ''} ${line.type === 'success' ? 'term-success' : ''} ${line.type === 'ascii' ? 'term-accent' : ''}`}
-                        >
-                          {line.type === 'ascii' ? line.content : linkifyText(line.content)}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="terminal-input-line">
-                      <span className="terminal-prompt">visitor</span>
-                      <span className="terminal-separator">@</span>
-                      <span className="terminal-path">owenfisher.dev</span>
-                      <span className="terminal-separator">:</span>
-                      <span className="terminal-path">{currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')}</span>
-                      <span className="terminal-separator">$ </span>
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        className="terminal-input"
-                        value={currentInput}
-                        onChange={(e) => setCurrentInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        autoFocus
-                        spellCheck={false}
-                        autoComplete="off"
-                      />
-                    </div>
-                  </>
-                )}
+        <div className="terminal-workspace">
+          <div className="terminal-body" ref={outputRef}>
+            {isPlayingSnake ? (
+              <div className="terminal-output">
+                <div className="terminal-line term-accent terminal-line-pre">
+                  {renderSnakeBoard()}
+                </div>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="terminal-output">
+                  {lines.map((line, index) => (
+                    <div
+                      key={index}
+                      className={`terminal-line ${line.type === 'error' ? 'term-error' : ''} ${line.type === 'success' ? 'term-success' : ''} ${line.type === 'ascii' ? 'term-accent' : ''}`}
+                    >
+                      {line.type === 'ascii' ? line.content : linkifyText(line.content)}
+                    </div>
+                  ))}
+                </div>
 
-            <div className="terminal-statusbar">
-              <span>mode: terminal</span>
-              <span>theme: {theme}</span>
-              <span>selected: {selectedProject.slug}</span>
-              <span>shortcuts: tab autocomplete · ctrl+l clear · code {selectedProject.id}</span>
-            </div>
-          </>
-        )}
+                <div className="terminal-input-line">
+                  <span className="terminal-prompt">visitor</span>
+                  <span className="terminal-separator">@</span>
+                  <span className="terminal-path">owenfisher.dev</span>
+                  <span className="terminal-separator">:</span>
+                  <span className="terminal-path">{currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')}</span>
+                  <span className="terminal-separator">$ </span>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    className="terminal-input"
+                    value={currentInput}
+                    onChange={(e) => setCurrentInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    spellCheck={false}
+                    autoComplete="off"
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="terminal-statusbar">
+          <span>mode: terminal</span>
+          <span>theme: {theme}</span>
+          <span>selected: {selectedProject.slug}</span>
+          <span>shortcuts: tab autocomplete · ctrl+l clear · code {selectedProject.id}</span>
+        </div>
       </div>
     </div>
   );
