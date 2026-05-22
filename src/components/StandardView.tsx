@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { projects, Project, projectCategories } from '../data/projects';
+import GitHubContributions from './GitHubContributions';
 import MarketTicker from './MarketTicker';
 import {
   ContactSection,
@@ -92,6 +93,7 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
           onOpenSandbox={setSandboxProject}
           onTerminalDemo={onTerminalDemo}
         />
+        <GitHubContributions />
         <section className="section market-section-wrapper" id="markets">
           <div className="container">
             <MarketTicker />
