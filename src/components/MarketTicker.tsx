@@ -81,7 +81,7 @@ export default function MarketTicker() {
           <h2 className="section-title">Live Markets</h2>
         </div>
         <div className="market-grid">
-          <p style={{ color: 'var(--text-dim)', fontSize: '13px' }}>Connecting to Coinbase WebSocket...</p>
+          <p className="market-connecting">Connecting to Coinbase WebSocket...</p>
         </div>
       </div>
     );
@@ -95,7 +95,7 @@ export default function MarketTicker() {
       </div>
       <div className="market-status">
         <span className={`status-dot ${connected ? 'live' : ''}`} />
-        <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+        <span className="market-status-text">
           {connected ? 'LIVE' : 'RECONNECTING'}
         </span>
       </div>
@@ -119,7 +119,7 @@ export default function MarketTicker() {
                 })}
               </div>
               <div className="market-open">
-                <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+                <span className="market-open-text">
                   24h open: ${entry.open24h.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>

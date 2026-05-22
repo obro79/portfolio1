@@ -67,8 +67,8 @@ export default function StackBlitzEmbed({ repo, openFile, startScript, onClose }
         <div className="stackblitz-header">
           <div className="stackblitz-header-left">
             <span className="stackblitz-title">
-              <span style={{ color: 'var(--accent)' }}>$</span> npm run dev
-              <span style={{ color: 'var(--text-dim)' }}> — {repo}</span>
+              <span className="term-accent">$</span> npm run dev
+              <span className="stackblitz-repo"> — {repo}</span>
             </span>
           </div>
           <button
@@ -76,7 +76,7 @@ export default function StackBlitzEmbed({ repo, openFile, startScript, onClose }
             onClick={onClose}
             aria-label="Close StackBlitz"
           >
-            <span style={{ color: 'var(--accent)' }}>ESC</span> Close
+            <span className="term-accent">ESC</span> Close
           </button>
         </div>
 
@@ -85,20 +85,20 @@ export default function StackBlitzEmbed({ repo, openFile, startScript, onClose }
           {isLoading && (
             <div className="stackblitz-loading">
               <div className="loading-text">
-                <span style={{ color: 'var(--accent)' }}>{'>'}</span> Starting development server...
+                <span className="term-accent">{'>'}</span> Starting development server...
                 <br />
-                <span style={{ color: 'var(--accent)' }}>{'>'}</span> Installing dependencies...
+                <span className="term-accent">{'>'}</span> Installing dependencies...
                 <br />
-                <span style={{ color: 'var(--accent)' }}>{'>'}</span> Compiling...
+                <span className="term-accent">{'>'}</span> Compiling...
               </div>
             </div>
           )}
 
           {error && (
             <div className="stackblitz-error">
-              <span style={{ color: 'var(--error)' }}>Error:</span> {error}
+              <span className="term-error">Error:</span> {error}
               <br />
-              <button onClick={onClose} style={{ marginTop: '1rem', color: 'var(--accent)', background: 'none', border: '1px solid var(--accent)', padding: '0.5rem 1rem', cursor: 'pointer' }}>
+              <button className="stackblitz-return" onClick={onClose}>
                 Return to terminal
               </button>
             </div>
@@ -108,10 +108,7 @@ export default function StackBlitzEmbed({ repo, openFile, startScript, onClose }
           <div
             ref={containerRef}
             className="stackblitz-iframe-container"
-            style={{
-              opacity: isLoading ? 0 : 1,
-              transition: 'opacity 0.3s ease'
-            }}
+            data-loading={isLoading ? 'true' : 'false'}
           />
         </div>
       </div>

@@ -42,14 +42,8 @@ export default function Home() {
           <title>Owen Fisher · Backend Engineer</title>
           <meta name="description" content="Backend and infrastructure portfolio for Owen Fisher, focused on Python services, data pipelines, FastAPI, Kafka, Postgres, Redis, Docker, Databricks, and AWS." />
         </Head>
-        <div style={{
-          minHeight: '100vh',
-          background: '#0d1117',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <span style={{ color: '#00d4ff' }}>Loading...</span>
+        <div className="loading-screen">
+          <span className="loading-text">Loading...</span>
         </div>
       </>
     );

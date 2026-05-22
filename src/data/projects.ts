@@ -113,6 +113,8 @@ export const projects: Project[] = [
     visual: {
       type: 'architecture',
       title: 'transfer model',
+      image: '/projects/tower-devpost.png',
+      imageAlt: 'Tower Devpost project thumbnail',
       lines: [
         'Device A CLI -> FastAPI registry -> SQLite metadata',
         'Device B CLI -> search "*.pdf"',
@@ -143,8 +145,8 @@ export const projects: Project[] = [
     visual: {
       type: 'architecture',
       title: 'trust boundary',
-      image: '/projects/maintaineros.png',
-      imageAlt: 'MaintainerOS product mark',
+      image: '/projects/maintaineros-devpost.png',
+      imageAlt: 'MaintainerOS Devpost project thumbnail',
       lines: [
         'issue -> route -> context pack',
         'context pack -> agent attempt or contributor task',
@@ -153,7 +155,8 @@ export const projects: Project[] = [
       ]
     },
     links: {
-      github: 'https://github.com/obro79/maintainerOS'
+      github: 'https://github.com/obro79/maintainerOS',
+      devpost: 'https://devpost.com/software/maintaineros'
     }
   },
   {
@@ -174,8 +177,8 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'application pipeline',
-      image: '/projects/recruit-dashboard.png',
-      imageAlt: 'Recruit application automation dashboard',
+      image: '/projects/recruit-devpost.png',
+      imageAlt: 'Recruit Devpost project thumbnail',
       lines: [
         'ingest ats_feeds --limit 500',
         'filter hard_mismatches',
@@ -186,7 +189,8 @@ export const projects: Project[] = [
     },
     links: {
       github: 'https://github.com/obro79/recruit',
-      demo: 'https://recruit-main-beryl.vercel.app'
+      demo: 'https://recruit-main-beryl.vercel.app',
+      devpost: 'https://devpost.com/software/recruit-h3lc2r'
     }
   },
   {
@@ -207,8 +211,8 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'live coaching loop',
-      image: '/projects/rehabify-landing.png',
-      imageAlt: 'Rehabify realtime physical therapy coaching interface',
+      image: '/projects/rehabify-devpost.png',
+      imageAlt: 'Rehabify Devpost project thumbnail',
       lines: [
         'camera frame -> pose landmarks',
         'voice prompt -> STT transcript',
@@ -270,6 +274,8 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'voice deployment flow',
+      image: '/projects/echome-devpost.png',
+      imageAlt: 'EchoMe Devpost project thumbnail',
       lines: [
         'speak app idea',
         'generate code with Claude',

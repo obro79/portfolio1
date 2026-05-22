@@ -95,6 +95,7 @@ work.
 Email:    owenfisher46@gmail.com
 GitHub:   github.com/obro79
 LinkedIn: linkedin.com/in/fisherowen
+Devpost:  devpost.com/obro79
 Medium:   medium.com/@owenfisher46
 
 Run 'mailto' to open an email client.

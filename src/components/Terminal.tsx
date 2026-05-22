@@ -74,7 +74,7 @@ function linkifyText(text: string): (string | React.ReactElement)[] {
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          style={{ color: 'var(--accent)' }}
+          className="terminal-link"
         >
           {part}
         </a>
@@ -1235,7 +1235,7 @@ nothing to commit, working tree clean
               <div className="terminal-body" ref={outputRef}>
                 {isPlayingSnake ? (
                   <div className="terminal-output">
-                    <div className="terminal-line term-accent" style={{ whiteSpace: 'pre' }}>
+                    <div className="terminal-line term-accent terminal-line-pre">
                       {renderSnakeBoard()}
                     </div>
                   </div>
@@ -1246,7 +1246,6 @@ nothing to commit, working tree clean
                         <div
                           key={index}
                           className={`terminal-line ${line.type === 'error' ? 'term-error' : ''} ${line.type === 'success' ? 'term-success' : ''} ${line.type === 'ascii' ? 'term-accent' : ''}`}
-                          style={{ whiteSpace: 'pre-wrap' }}
                         >
                           {line.type === 'ascii' ? line.content : linkifyText(line.content)}
                         </div>
@@ -1255,11 +1254,11 @@ nothing to commit, working tree clean
 
                     <div className="terminal-input-line">
                       <span className="terminal-prompt">visitor</span>
-                      <span style={{ color: 'var(--text-dim)' }}>@</span>
+                      <span className="terminal-separator">@</span>
                       <span className="terminal-path">owenfisher.dev</span>
-                      <span style={{ color: 'var(--text-dim)' }}>:</span>
+                      <span className="terminal-separator">:</span>
                       <span className="terminal-path">{currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')}</span>
-                      <span style={{ color: 'var(--text-dim)' }}>$ </span>
+                      <span className="terminal-separator">$ </span>
                       <input
                         ref={inputRef}
                         type="text"
