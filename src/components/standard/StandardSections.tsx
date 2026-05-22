@@ -10,12 +10,25 @@ const ASCII_NAME = `
  ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
 `;
 
-const experiences = [
+type Experience = {
+  period: string;
+  company: string;
+  role: string;
+  description?: string;
+  bullets?: string[];
+};
+
+const experiences: Experience[] = [
   {
     period: 'Sep. 2025 — May 2026',
     company: 'Royal Bank of Canada',
     role: 'Software Engineer',
-    description: 'Migrated legacy MATLAB factor-scoring and preprocessing paths to Python/PySpark on Databricks, preserving backward-compatible outputs while adding caching, multithreading, and regression validation across 500M+ score rows.'
+    bullets: [
+      'Migrated legacy MATLAB factor-scoring pipeline to Python/PySpark on Databricks, cutting single-factor backfills from 3.25 hours to under 1 minute for a 250x+ speedup across 30+ years of financial time-series data.',
+      'Owned Python POC rebuild of legacy MATLAB batch preprocessing pipeline, preserving backward-compatible file outputs while adding caching and multithreading to make daily runs more reliable and 15-20x faster.',
+      'Built regression validation framework across golden datasets, 26 intermediate calculation columns, 150 factor-region combinations, and 500M+ score rows, giving the team confidence to replace the legacy MATLAB pipeline.',
+      'Built Parquet/Delta migration pipeline centralizing 3.1B+ rows of legacy research data from proprietary MATLAB/NAS formats into Databricks volumes and governed Delta tables for faster querying.'
+    ]
   },
   {
     period: 'Jan. 2025 — Mar. 2025',
@@ -135,7 +148,15 @@ export function ExperienceSection() {
                 </div>
                 <span className="experience-role">{exp.role}</span>
               </div>
-              <p className="experience-description">{exp.description}</p>
+              {exp.bullets ? (
+                <ul className="experience-bullets">
+                  {exp.bullets.map((bullet) => (
+                    <li key={bullet}>{bullet}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="experience-description">{exp.description}</p>
+              )}
             </article>
           ))}
         </div>

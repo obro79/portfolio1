@@ -680,6 +680,20 @@ a:hover {
   padding-left: var(--spacing-md);
 }
 
+.experience-bullets {
+  display: grid;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding-left: calc(var(--spacing-md) + 1rem);
+  color: var(--text-dim);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.experience-bullets li::marker {
+  color: var(--success);
+}
+
 /* Projects Section */
 .projects-container {
   width: min(1500px, calc(100% - 4rem));

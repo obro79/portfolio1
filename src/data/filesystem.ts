@@ -13,13 +13,24 @@ const experienceContent = `┌────────────────�
 
 [2025-09 -> 2026-05] Royal Bank of Canada
   Role: Software Engineer
-  Migrated legacy MATLAB factor-scoring and preprocessing paths to
-  Python/PySpark on Databricks, preserving file compatibility while
-  cutting backfills and daily runs by orders of magnitude.
+  - Migrated legacy MATLAB factor-scoring pipeline to Python/PySpark
+    on Databricks, cutting single-factor backfills from 3.25 hours to
+    under 1 minute for a 250x+ speedup across 30+ years of financial
+    time-series data.
 
-  Built regression validation over golden datasets, intermediate
-  calculation columns, factor-region combinations, and 500M+ score
-  rows so the team could replace legacy MATLAB pipelines confidently.
+  - Owned Python POC rebuild of legacy MATLAB batch preprocessing
+    pipeline, preserving backward-compatible file outputs while adding
+    caching and multithreading to make daily runs more reliable and
+    15-20x faster.
+
+  - Built regression validation framework across golden datasets, 26
+    intermediate calculation columns, 150 factor-region combinations,
+    and 500M+ score rows, giving the team confidence to replace the
+    legacy MATLAB pipeline.
+
+  - Built Parquet/Delta migration pipeline centralizing 3.1B+ rows of
+    legacy research data from proprietary MATLAB/NAS formats into
+    Databricks volumes and governed Delta tables for faster querying.
 
 [2025-01 -> 2025-03] Quantico Research
   Role: Software Engineer
@@ -111,9 +122,20 @@ EDUCATION
 
 EXPERIENCE
   Royal Bank of Canada — Software Engineer          Sep 2025 - May 2026
-    Migrated MATLAB factor-scoring and preprocessing pipelines to
-    Python/PySpark on Databricks, added caching and multithreading,
-    and validated replacements across golden datasets and 500M+ rows.
+    Migrated MATLAB factor-scoring to Python/PySpark on Databricks,
+    reducing single-factor backfills from 3.25 hours to under 1 minute
+    for a 250x+ speedup across 30+ years of financial time-series data.
+
+    Rebuilt legacy MATLAB batch preprocessing in Python with
+    backward-compatible file outputs, caching, and multithreading for
+    15-20x faster daily runs.
+
+    Built regression validation across golden datasets, 26 intermediate
+    columns, 150 factor-region combinations, and 500M+ score rows.
+
+    Built Parquet/Delta migration pipeline centralizing 3.1B+ rows from
+    proprietary MATLAB/NAS formats into Databricks volumes and governed
+    Delta tables.
 
   Quantico Research — Software Engineer             Jan 2025 - Mar 2025
     Provisioned AWS infrastructure with Terraform, built Python/NumPy
