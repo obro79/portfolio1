@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import dynamic from 'next/dynamic';
 import { resolvePath, getNode, listDirectory, FileSystemNode } from '../data/filesystem';
-import { projects, Project } from '../data/projects';
+import { findProject, projects, Project } from '../data/projects';
 
 // Dynamic import to prevent SSR issues with StackBlitz
 const StackBlitzEmbed = dynamic(() => import('./StackBlitzEmbed'), { ssr: false });
@@ -51,11 +51,11 @@ const WELCOME_TEXT = `
 Welcome to Owen Fisher's interactive terminal portfolio.
 
 Try these:
+  projects          Browse backend and infrastructure work
+  open flux         Inspect a project in the TUI preview
+  code prepme       Open source in a StackBlitz sandbox
   run flux          Launch a live data pipeline demo
   neofetch          System info, terminal-style
-  theme dracula     Switch color themes
-  snake             Play snake in your terminal
-  git log           See my real GitHub activity
 
 Type 'help' for the full command list.
 `;
@@ -89,18 +89,18 @@ const COMMANDS = [
   'mailto', 'sudo', 'echo', 'date', 'neofetch', 'npm', 'nrd',
   'history', 'tree', 'git', 'fortune', 'cowsay', 'snake', 'coffee',
   'sl', 'rm', 'vim', 'exit', 'theme', 'run', 'resume', 'make',
+  'projects', 'open', 'code', 'sandbox', 'demo', 'skills', 'experience',
 ];
 
 const HELP_TEXT = `
 COOL STUFF
-  run flux         Live data pipeline demo        neofetch         System info
-  theme <name>     Switch theme (dracula,         git log          Live GitHub activity
-                   gruvbox, solarized)            snake            Classic snake game
-  theme accent #   Custom accent color            resume           View resume
-  sudo hire-owen   ???                            cowsay <msg>     Moo
+  projects         Browse project files           open <project>   Select project
+  code <project>   Open source sandbox            demo <project>   Run scripted demo
+  run flux         Live pipeline demo             neofetch         System info
+  theme <name>     Switch theme                   git log          GitHub activity
 
 NAVIGATE                                         PORTFOLIO
-  ls / cd / cat / pwd / tree                       whoami  contact  resume  mailto
+  ls / cd / cat / pwd / tree                       whoami  contact  resume  skills
 
 SHORTCUTS: Tab autocomplete | Up/Down history | Ctrl+L clear | Ctrl+C cancel
 `;
@@ -123,6 +123,7 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
   const [isMinimized, setIsMinimized] = useState(false);
   const [stackblitzProject, setStackblitzProject] = useState<Project | null>(null);
   const [theme, setTheme] = useState<string>('default');
+  const [selectedProjectId, setSelectedProjectId] = useState(projects[0]?.id || 'flux');
   const fluxDemoRef = useRef<NodeJS.Timeout | null>(null);
 
   // Snake game state
@@ -416,6 +417,92 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
     setLines(prev => [...prev, { type, content }]);
   };
 
+  const selectedProject = projects.find(project => project.id === selectedProjectId) || projects[0];
+
+  const formatProjectSummary = (project: Project): string => {
+    const links = [
+      project.links.github ? `source:  ${project.links.github}` : '',
+      project.links.demo ? `demo:    ${project.links.demo}` : '',
+      project.stackblitz ? `sandbox: code ${project.id}` : '',
+      project.terminalDemo ? `demo:    ${project.terminalDemo}` : '',
+    ].filter(Boolean);
+
+    return `projects/${project.slug}
+
+${project.title} (${project.year})
+role:  ${project.role}
+stack: ${project.stack.join(', ')}
+
+${project.description}
+
+proof:
+${project.metrics.map(metric => `  - ${metric}`).join('\n')}
+
+preview:
+${project.preview.map(line => `  > ${line}`).join('\n')}
+
+${links.join('\n')}`;
+  };
+
+  const listProjects = () => {
+    const rows = projects.map(project => {
+      const marker = project.id === selectedProjectId ? '>' : ' ';
+      const tags = project.categories.filter(cat => cat !== 'highlighted').slice(0, 2).join(',');
+      return `${marker} ${project.slug.padEnd(20)} ${project.role.padEnd(32)} ${tags}`;
+    });
+    addLine('output', `PROJECTS
+  FILE                 ROLE                             TAGS
+  ${'─'.repeat(72)}
+${rows.join('\n')}
+
+Use: open <project>, cat projects/<project>.md, code <project>, demo <project>`);
+  };
+
+  const selectProject = (query?: string, silent = false): Project | null => {
+    const project = findProject(query);
+    if (!project) {
+      addLine('error', `open: project '${query || ''}' not found. Try: projects`);
+      return null;
+    }
+    setSelectedProjectId(project.id);
+    if (!silent) addLine('output', formatProjectSummary(project));
+    return project;
+  };
+
+  const openProjectSandbox = (project: Project) => {
+    if (project.stackblitz) {
+      addLine('success', `Launching StackBlitz sandbox for ${project.title}...`);
+      setTimeout(() => setStackblitzProject(project), 300);
+      return;
+    }
+
+    if (project.links.github) {
+      addLine('output', `${project.title} does not have an embedded sandbox yet.`);
+      addLine('success', `Opening source: ${project.links.github}`);
+      window.open(project.links.github, '_blank');
+      return;
+    }
+
+    addLine('error', `code: no source configured for ${project.title}`);
+  };
+
+  const suggestCommand = (cmd: string): string | null => {
+    let best = '';
+    let bestScore = 0;
+    for (const candidate of COMMANDS) {
+      let score = 0;
+      for (let i = 0; i < Math.min(cmd.length, candidate.length); i++) {
+        if (cmd[i] === candidate[i]) score++;
+      }
+      if (candidate.includes(cmd) || cmd.includes(candidate)) score += 2;
+      if (score > bestScore) {
+        best = candidate;
+        bestScore = score;
+      }
+    }
+    return bestScore >= 2 ? best : null;
+  };
+
   // Get project from current directory
   const getCurrentProject = (): Project | null => {
     // Check if we're in a project directory: projects/<project-id>
@@ -427,8 +514,8 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
   };
 
   // Handle npm run dev command
-  const handleNpmRunDev = () => {
-    const project = getCurrentProject();
+  const handleNpmRunDev = (targetProject?: Project) => {
+    const project = targetProject || getCurrentProject();
 
     if (!project) {
       addLine('error', 'npm ERR! Missing script: "dev"');
@@ -447,7 +534,7 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
         window.open(project.links.demo, '_blank');
       } else {
         addLine('error', `npm ERR! No dev server configured for ${project.title}`);
-        addLine('output', 'Try: cat README.md for more information');
+        addLine('output', 'Try: cat README.md or code <project> for more information');
       }
       return;
     }
@@ -557,7 +644,11 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
         }
         const filePath = resolvePath(args[0], currentDir);
         const node = getNode(filePath);
-        if (!node) {
+        const project = findProject(args[0]);
+        if (!node && project) {
+          setSelectedProjectId(project.id);
+          addLine('output', formatProjectSummary(project));
+        } else if (!node) {
           addLine('error', `cat: ${args[0]}: No such file or directory`);
         } else if (node.type === 'directory') {
           addLine('error', `cat: ${args[0]}: Is a directory`);
@@ -571,6 +662,20 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
         const aboutNode = getNode(['about.txt']);
         if (aboutNode?.content) {
           addLine('output', aboutNode.content);
+        }
+        break;
+
+      case 'skills':
+        const skillsNode = getNode(['skills.txt']);
+        if (skillsNode?.content) {
+          addLine('output', skillsNode.content);
+        }
+        break;
+
+      case 'experience':
+        const experienceNode = getNode(['experience', 'roles.log']);
+        if (experienceNode?.content) {
+          addLine('output', experienceNode.content);
         }
         break;
 
@@ -626,13 +731,13 @@ export default function TerminalView({ onClose, initialCommand }: TerminalViewPr
       .oOOOOOOOo.       Theme:      ${theme}
      oO          Oo     Uptime:     Since Jan 2025
                          ──────────────────────────
-                         Role:       Quantitative Developer @ RBC
+                         Role:       Backend Engineer
                          Location:   Vancouver, BC
-                         Education:  UBC CS + Stats
+                         Education:  UBC Computer Science
                          ──────────────────────────
-                         Languages:  Python, TS, JS, Java, SQL
-                         Frameworks: Next.js, React, Flask, NumPy
-                         Tools:      Git, Docker, CI/CD, PostgreSQL
+                         Languages:  Python, TS, Java, C++, SQL
+                         Backend:    FastAPI, Kafka, Postgres, Redis
+                         Infra:      Docker, AWS, Terraform, Databricks
                          Projects:   ${projects.length}
                          Hackathons: ${hackathonCount}
                          ──────────────────────────
@@ -665,6 +770,36 @@ added 847 packages in 3.2s
       case 'nrd': {
         // Shortcut for npm run dev
         handleNpmRunDev();
+        break;
+      }
+
+      case 'projects':
+        listProjects();
+        break;
+
+      case 'open': {
+        selectProject(args[0]);
+        break;
+      }
+
+      case 'code':
+      case 'sandbox': {
+        const project = selectProject(args[0] || selectedProjectId, true);
+        if (project) openProjectSandbox(project);
+        break;
+      }
+
+      case 'demo': {
+        const project = selectProject(args[0] || selectedProjectId, true);
+        if (!project) break;
+        if (project.terminalDemo) {
+          executeCommand(project.terminalDemo);
+        } else if (project.links.demo) {
+          addLine('success', `Opening live demo for ${project.title}...`);
+          window.open(project.links.demo, '_blank');
+        } else {
+          addLine('error', `demo: ${project.id} does not have a configured demo`);
+        }
         break;
       }
 
@@ -805,6 +940,7 @@ Pro tip: Never run 'rm -rf /' on a real system.
 
       case 'run': {
         if (args[0] === 'flux') {
+          setSelectedProjectId('flux');
           // Flux pipeline demo
           addLine('ascii', `
   ╔═══════════════════════════════════════╗
@@ -812,30 +948,24 @@ Pro tip: Never run 'rm -rf /' on a real system.
   ╚═══════════════════════════════════════╝`);
 
           const steps = [
-            { delay: 400, type: 'output' as const, msg: '[docker] Starting services...' },
-            { delay: 800, type: 'success' as const, msg: '[docker] ✓ PostgreSQL    :5432  ready' },
-            { delay: 1200, type: 'success' as const, msg: '[docker] ✓ Redis         :6379  ready' },
-            { delay: 1600, type: 'success' as const, msg: '[docker] ✓ Redpanda      :9092  ready' },
-            { delay: 2000, type: 'success' as const, msg: '[docker] ✓ FastAPI       :8000  ready' },
-            { delay: 2600, type: 'output' as const, msg: '\n[kafka] Streaming events to topic: flux.events' },
-            { delay: 3000, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=a3f2c1 type=page_view    user=usr_8472 latency=4ms` },
-            { delay: 3300, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=b7e4d2 type=purchase     user=usr_1293 latency=7ms` },
-            { delay: 3600, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=c1a9f3 type=signup       user=usr_5841 latency=3ms` },
-            { delay: 3900, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=d5b2e4 type=page_view    user=usr_3017 latency=5ms` },
-            { delay: 4200, type: 'output' as const, msg: `[event] ${new Date().toISOString()} id=e8c3f5 type=click        user=usr_6294 latency=2ms` },
-            { delay: 4800, type: 'output' as const, msg: '\n[kafka] Partition throughput:' },
-            { delay: 5200, type: 'output' as const, msg: '  P0  ████████████████████░░░░  12,847 msg/s' },
-            { delay: 5400, type: 'output' as const, msg: '  P1  ███████████████████░░░░░  11,923 msg/s' },
-            { delay: 5600, type: 'output' as const, msg: '  P2  █████████████████████░░░  14,102 msg/s' },
-            { delay: 6200, type: 'output' as const, msg: '\n[consumer] Consumer group: flux-consumers' },
-            { delay: 6500, type: 'output' as const, msg: '  Consumer 0  lag: 12 → 4 → 0' },
-            { delay: 6800, type: 'output' as const, msg: '  Consumer 1  lag: 8 → 2 → 0' },
-            { delay: 7100, type: 'output' as const, msg: '  Consumer 2  lag: 15 → 6 → 0' },
-            { delay: 7800, type: 'success' as const, msg: '\n[pipeline] Summary:' },
-            { delay: 8000, type: 'success' as const, msg: '  Events processed:  38,872' },
-            { delay: 8200, type: 'success' as const, msg: '  Avg latency:       4.2ms' },
-            { delay: 8400, type: 'success' as const, msg: '  Throughput:        38,872 events/sec' },
-            { delay: 8600, type: 'success' as const, msg: '  Status:            All consumers caught up' },
+            { delay: 400, type: 'output' as const, msg: '[compose] Starting postgres, redis, kafka, prometheus, grafana...' },
+            { delay: 800, type: 'success' as const, msg: '[compose] ✓ PostgreSQL    :5432  ready' },
+            { delay: 1200, type: 'success' as const, msg: '[compose] ✓ Redis         :6379  ready' },
+            { delay: 1600, type: 'success' as const, msg: '[compose] ✓ Kafka         :9092  topic=market_trades' },
+            { delay: 2000, type: 'success' as const, msg: '[api]     ✓ FastAPI       :8000  /health ok' },
+            { delay: 2600, type: 'output' as const, msg: '\n[ingest] Coinbase + Kraken adapters normalizing trades' },
+            { delay: 3000, type: 'output' as const, msg: `[trade] ${new Date().toISOString()} exchange=coinbase product=BTC-USD px=102438.12 qty=0.018` },
+            { delay: 3300, type: 'output' as const, msg: `[trade] ${new Date().toISOString()} exchange=kraken   product=ETH-USD px=3921.45 qty=0.420` },
+            { delay: 3700, type: 'output' as const, msg: '\n[kafka] Fan-out consumers: raw, candles, indicators' },
+            { delay: 4100, type: 'output' as const, msg: '  raw-consumer        committed offset 18,244  lag 0' },
+            { delay: 4400, type: 'output' as const, msg: '  ticker-consumer     wrote OHLCV candle -> postgres' },
+            { delay: 4700, type: 'output' as const, msg: '  indicator-consumer  wrote SMA/RSI/EMA -> redis' },
+            { delay: 5200, type: 'output' as const, msg: '\n[prometheus] scrape targets up: ingestion, consumer, api' },
+            { delay: 5500, type: 'output' as const, msg: '  api_latency_p95_ms=24  dlq_total=0  consumer_lag=0' },
+            { delay: 6000, type: 'success' as const, msg: '\n[smoke] GET /markets -> 200' },
+            { delay: 6300, type: 'success' as const, msg: '[smoke] GET /candles/BTC-USD/1m?exchange=demo -> 200' },
+            { delay: 6600, type: 'success' as const, msg: '[smoke] WS /indicators/BTC-USD -> streaming' },
+            { delay: 7200, type: 'success' as const, msg: '\n[pipeline] Status: healthy, observable, replay-safe' },
             { delay: 9000, type: 'output' as const, msg: '\n  GitHub: https://github.com/obro79/Flux' },
           ];
 
@@ -946,7 +1076,8 @@ nothing to commit, working tree clean
         break;
 
       default:
-        addLine('error', `${cmd}: command not found. Type 'help' for available commands.`);
+        const suggestion = suggestCommand(cmd);
+        addLine('error', `${cmd}: command not found.${suggestion ? ` Did you mean '${suggestion}'?` : ''} Type 'help' for available commands.`);
     }
 
     setCurrentInput('');
@@ -997,6 +1128,14 @@ nothing to commit, working tree clean
           addLine('output', matches.join('  '));
           const prefix = getCommonPrefix(matches);
           if (prefix.length > lastPart.length) setCurrentInput(prefix);
+        }
+      } else if (['open', 'code', 'sandbox', 'demo', 'run'].includes(parts[0])) {
+        const matches = projects.map(project => project.id).filter(id => id.startsWith(lastPart));
+        if (matches.length === 1) {
+          parts[parts.length - 1] = matches[0];
+          setCurrentInput(parts.join(' '));
+        } else if (matches.length > 1) {
+          addLine('output', matches.join('  '));
         }
       } else {
         // Path completion
@@ -1090,49 +1229,62 @@ nothing to commit, working tree clean
           <span className="terminal-title">visitor@owenfisher.dev — terminal</span>
         </div>
 
-        {!isMinimized && <div className="terminal-body" ref={outputRef}>
-          {isPlayingSnake ? (
-            <div className="terminal-output">
-              <div className="terminal-line term-accent" style={{ whiteSpace: 'pre' }}>
-                {renderSnakeBoard()}
+        {!isMinimized && (
+          <>
+            <div className="terminal-workspace">
+              <div className="terminal-body" ref={outputRef}>
+                {isPlayingSnake ? (
+                  <div className="terminal-output">
+                    <div className="terminal-line term-accent" style={{ whiteSpace: 'pre' }}>
+                      {renderSnakeBoard()}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="terminal-output">
+                      {lines.map((line, index) => (
+                        <div
+                          key={index}
+                          className={`terminal-line ${line.type === 'error' ? 'term-error' : ''} ${line.type === 'success' ? 'term-success' : ''} ${line.type === 'ascii' ? 'term-accent' : ''}`}
+                          style={{ whiteSpace: 'pre-wrap' }}
+                        >
+                          {line.type === 'ascii' ? line.content : linkifyText(line.content)}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="terminal-input-line">
+                      <span className="terminal-prompt">visitor</span>
+                      <span style={{ color: 'var(--text-dim)' }}>@</span>
+                      <span className="terminal-path">owenfisher.dev</span>
+                      <span style={{ color: 'var(--text-dim)' }}>:</span>
+                      <span className="terminal-path">{currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')}</span>
+                      <span style={{ color: 'var(--text-dim)' }}>$ </span>
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        className="terminal-input"
+                        value={currentInput}
+                        onChange={(e) => setCurrentInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                        spellCheck={false}
+                        autoComplete="off"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-          ) : (
-            <>
-              <div className="terminal-output">
-                {lines.map((line, index) => (
-                  <div
-                    key={index}
-                    className={`terminal-line ${line.type === 'error' ? 'term-error' : ''} ${line.type === 'success' ? 'term-success' : ''} ${line.type === 'ascii' ? 'term-accent' : ''}`}
-                    style={{ whiteSpace: 'pre-wrap' }}
-                  >
-                    {line.type === 'ascii' ? line.content : linkifyText(line.content)}
-                  </div>
-                ))}
-              </div>
 
-              <div className="terminal-input-line">
-                <span className="terminal-prompt">visitor</span>
-                <span style={{ color: 'var(--text-dim)' }}>@</span>
-                <span className="terminal-path">owenfisher.dev</span>
-                <span style={{ color: 'var(--text-dim)' }}>:</span>
-                <span className="terminal-path">{currentDir.length === 0 ? '~' : '~/' + currentDir.join('/')}</span>
-                <span style={{ color: 'var(--text-dim)' }}>$ </span>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  className="terminal-input"
-                  value={currentInput}
-                  onChange={(e) => setCurrentInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  autoFocus
-                  spellCheck={false}
-                  autoComplete="off"
-                />
-              </div>
-            </>
-          )}
-        </div>}
+            <div className="terminal-statusbar">
+              <span>mode: terminal</span>
+              <span>theme: {theme}</span>
+              <span>selected: {selectedProject.slug}</span>
+              <span>shortcuts: tab autocomplete · ctrl+l clear · code {selectedProject.id}</span>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

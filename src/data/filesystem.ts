@@ -11,32 +11,33 @@ const experienceContent = `┌────────────────�
 │                     EXPERIENCE LOG                          │
 └─────────────────────────────────────────────────────────────┘
 
-[2025-09-01] Royal Bank of Canada
-  Role: Quantitative Developer | Status: Current
-  Optimized risk assessment by migrating pricing engine from MATLAB
-  to Python + Dask, deploying scalable pipelines that sped up
-  valuations 70% and cut maintenance 50%+. Created comprehensive
-  onboarding documentation using Confluence, cutting onboarding
-  time by 50%.
+[2025-09 -> 2026-05] Royal Bank of Canada
+  Role: Software Engineer
+  Migrated legacy MATLAB factor-scoring and preprocessing paths to
+  Python/PySpark on Databricks, preserving file compatibility while
+  cutting backfills and daily runs by orders of magnitude.
 
-[2025-01-01] Quantico Research
-  Role: Quantitative Developer | Status: Jan 2025 - May 2025
-  Led development of a Hidden Markov Model in Stan with a
-  Python/NumPy interface, slashing seismic risk exposure by 80%.
-  Designed real-time seismic data pipelines in Python using NumPy
-  for vectorized data cleaning. Automated walk-forward validation
-  and stress testing with PyTest inside a CI/CD pipeline.
+  Built regression validation over golden datasets, intermediate
+  calculation columns, factor-region combinations, and 500M+ score
+  rows so the team could replace legacy MATLAB pipelines confidently.
 
-[2025-06-01] UBC Science Undergraduate Society
-  Role: Frontend Developer | Status: Current
-  Redesigned website with 5+ new pages. Engineered 10+ reusable
-  components and introduced 15+ design tokens in Next.js/TypeScript.
+[2025-01 -> 2025-03] Quantico Research
+  Role: Software Engineer
+  Provisioned Terraform-managed AWS infrastructure for transcript
+  ingestion, embedding storage, and investment-factor generation.
 
-[2025-05-01] UBC Actuarial Science Club
-  Role: Frontend Engineer | Status: Current
-  Built site with Next.js, React, and Tailwind CSS, increasing
-  member sign-ups by 200%. Led planning and development of the
-  club's first website.
+  Built Python/NumPy pipelines for seismic risk signals and automated
+  walk-forward validation with Pytest inside CI.
+
+[2025-06 -> present] UBC Science Undergraduate Society
+  Role: Frontend Developer
+  Built production Next.js/TypeScript pages and reusable components for
+  student-facing workflows.
+
+[2025-05 -> present] UBC Actuarial Science Club
+  Role: Frontend Engineer
+  Led the club website build and shipped event/member surfaces in
+  Next.js, React, and Tailwind CSS.
 `;
 
 const aboutContent = `┌─────────────────────────────────────────────────────────────┐
@@ -44,18 +45,21 @@ const aboutContent = `┌──────────────────�
 └─────────────────────────────────────────────────────────────┘
 
 Name:       Owen Fisher
-Role:       Quantitative Developer
+Role:       Backend Engineer
 Location:   Vancouver, BC, Canada
 Education:  University of British Columbia
 
-Currently building quantitative systems at Royal Bank of Canada.
-Engineering data-driven solutions for systematic finance.
+I build Python services, data pipelines, and production-minded
+infrastructure. Recent work spans FastAPI services, Kafka consumers,
+Postgres/Redis data paths, Databricks migrations, AWS infrastructure,
+Dockerized local stacks, CI validation, and observability.
 
 Skills:
-├── Languages: Python, TypeScript, JavaScript, Java, SQL
-├── Frameworks: Next.js, React, Flask, NumPy, Pandas
-├── Tools: Git, Docker, CI/CD, PostgreSQL
-└── Focus: Quant Finance, Full-Stack Development
+├── Languages: Python, TypeScript, Java, C++, SQL, Bash
+├── Backend: FastAPI, Kafka, PostgreSQL, Redis, Pydantic, Pytest
+├── Data: PySpark, Databricks, NumPy, Pandas, Delta/Parquet
+├── Infra: AWS, Docker, Terraform, GitHub Actions, Vercel
+└── Focus: Backend systems, data infrastructure, reliability
 
 Contact:
 ├── Email: owenfisher46@gmail.com
@@ -63,55 +67,73 @@ Contact:
 └── LinkedIn: linkedin.com/in/fisherowen
 `;
 
+const skillsContent = `┌─────────────────────────────────────────────────────────────┐
+│                     SKILLS                                  │
+└─────────────────────────────────────────────────────────────┘
+
+Languages
+  Python, TypeScript, Java, C++, SQL, Bash, MATLAB, R
+
+Backend & Data
+  FastAPI, Kafka, PostgreSQL, Redis, PySpark, Pydantic, NumPy, Pandas
+
+Infrastructure
+  AWS, Docker, Terraform, Databricks, GitHub Actions, Vercel, Pytest
+
+Working style
+  Observable services, regression-tested migrations, local-first dev
+  environments, clear trust boundaries for automation.
+`;
+
 const contactContent = `┌─────────────────────────────────────────────────────────────┐
 │                       CONTACT                               │
 └─────────────────────────────────────────────────────────────┘
 
-Available for freelance projects and consulting.
+Open to backend, infrastructure, Python, data platform, and automation
+work.
 
 Email:    owenfisher46@gmail.com
 GitHub:   github.com/obro79
 LinkedIn: linkedin.com/in/fisherowen
+Medium:   medium.com/@owenfisher46
 
-Run 'mailto' to open email client.
+Run 'mailto' to open an email client.
 `;
 
 const resumeContent = `┌─────────────────────────────────────────────────────────────┐
-│                    OWEN FISHER - RESUME                      │
+│                    OWEN FISHER - RESUME                     │
 └─────────────────────────────────────────────────────────────┘
 
 EDUCATION
-  University of British Columbia                    2023 - 2027
-  B.Sc. Combined Major in Computer Science & Statistics
+  University of British Columbia
+  B.Sc. Computer Science, Minor in Mathematics      Expected May 2027
 
 EXPERIENCE
-  Royal Bank of Canada — Quantitative Developer   Sept. 2025 -
-    Migrated pricing engine from MATLAB to Python + Dask,
-    deploying scalable pipelines that sped up valuations 70%
-    and cut maintenance 50%+.
+  Royal Bank of Canada — Software Engineer          Sep 2025 - May 2026
+    Migrated MATLAB factor-scoring and preprocessing pipelines to
+    Python/PySpark on Databricks, added caching and multithreading,
+    and validated replacements across golden datasets and 500M+ rows.
 
-  Quantico Research — Quantitative Developer     Jan. - May 2025
-    Built Hidden Markov Model in Stan with Python/NumPy,
-    slashing seismic risk exposure by 80%. Designed real-time
-    seismic data pipelines with vectorized cleaning.
+  Quantico Research — Software Engineer             Jan 2025 - Mar 2025
+    Provisioned AWS infrastructure with Terraform, built Python/NumPy
+    risk-signal pipelines, and automated model validation in CI.
 
-  UBC Science Undergrad Society — Frontend Dev    June 2025 -
-    Redesigned website with 5+ new pages, engineered 10+
-    reusable components in Next.js/TypeScript.
+SELECTED PROJECTS
+  Flux        FastAPI + Kafka + Postgres + Redis market data pipeline
+  Cortex      Python backend spine for knowledge infrastructure
+  Tower       FastAPI + SQLite + TypeScript local-network file discovery
+  MaintainerOS GitHub issue routing and PR verification workflow
 
 SKILLS
-  Languages:   Python, TypeScript, JavaScript, Java, SQL
-  Frameworks:  Next.js, React, Flask, NumPy, Pandas, Dask
-  Tools:       Git, Docker, CI/CD, PostgreSQL, Redis, Kafka
-  Focus:       Quantitative Finance, Backend Engineering
+  Python, TypeScript, Java, C++, SQL, Bash
+  FastAPI, Kafka, PostgreSQL, Redis, PySpark, Docker, AWS, Terraform
 
 LINKS
-  GitHub:      https://github.com/obro79
-  LinkedIn:    https://linkedin.com/in/fisherowen
-  Email:       owenfisher46@gmail.com
+  GitHub:    https://github.com/obro79
+  LinkedIn:  https://linkedin.com/in/fisherowen
+  Email:     owenfisher46@gmail.com
 `;
 
-// Helper to wrap text to a max width
 function wrapText(text: string, maxWidth: number): string[] {
   const words = text.split(' ');
   const lines: string[] = [];
@@ -125,19 +147,20 @@ function wrapText(text: string, maxWidth: number): string[] {
       currentLine = word;
     }
   }
+
   if (currentLine) lines.push(currentLine);
   return lines;
 }
 
-// Helper to truncate text
 function truncate(text: string, maxLen: number): string {
   return text.length > maxLen ? text.slice(0, maxLen - 3) + '...' : text;
 }
 
-const BOX_WIDTH = 58; // Inner width of the box
+const BOX_WIDTH = 58;
 
-// Generate project directories from projects data
+const projectFiles: Record<string, FileSystemNode> = {};
 const projectDirs: Record<string, FileSystemNode> = {};
+
 projects.forEach(project => {
   const links = [];
   if (project.links.github) links.push(`GitHub:   ${project.links.github}`);
@@ -145,27 +168,35 @@ projects.forEach(project => {
   if (project.links.devpost) links.push(`Devpost:  ${project.links.devpost}`);
   if (project.links.video) links.push(`Video:    ${project.links.video}`);
   if (project.links.docs) links.push(`Docs:     ${project.links.docs}`);
-
-  const title = truncate(project.title, BOX_WIDTH - 2);
-  const year = `Year: ${project.year}`;
-  const tags = `Tags: ${truncate(project.categories.join(', '), BOX_WIDTH - 8)}`;
-  const descLines = wrapText(project.description, BOX_WIDTH - 2);
+  if (project.stackblitz) links.push(`Sandbox:  code ${project.id}`);
+  if (project.terminalDemo) links.push(`Demo:     ${project.terminalDemo}`);
 
   const border = '─'.repeat(BOX_WIDTH);
+  const descLines = wrapText(project.description, BOX_WIDTH - 2);
+  const stackLines = wrapText(project.stack.join(', '), BOX_WIDTH - 9);
+  const metricLines = project.metrics.flatMap(metric => wrapText(`- ${metric}`, BOX_WIDTH - 2));
+  const previewLines = project.preview.flatMap(line => wrapText(`> ${line}`, BOX_WIDTH - 2));
 
   const readmeContent = `┌${border}┐
-│ ${title.padEnd(BOX_WIDTH - 2)} │
+│ ${truncate(project.title, BOX_WIDTH - 2).padEnd(BOX_WIDTH - 2)} │
 ├${border}┤
-│ ${year.padEnd(BOX_WIDTH - 2)} │
-│ ${tags.padEnd(BOX_WIDTH - 2)} │
+│ ${`Role: ${project.role}`.padEnd(BOX_WIDTH - 2)} │
+│ ${`Year: ${project.year}`.padEnd(BOX_WIDTH - 2)} │
+│ ${`Tags: ${project.categories.join(', ')}`.padEnd(BOX_WIDTH - 2)} │
 ├${border}┤
 ${descLines.map(line => `│ ${line.padEnd(BOX_WIDTH - 2)} │`).join('\n')}
 ├${border}┤
-│ ${'Links:'.padEnd(BOX_WIDTH - 2)} │
+│ ${'Stack:'.padEnd(BOX_WIDTH - 2)} │
+${stackLines.map(line => `│ ${line.padEnd(BOX_WIDTH - 2)} │`).join('\n')}
+├${border}┤
+│ ${'Proof / metrics:'.padEnd(BOX_WIDTH - 2)} │
+${metricLines.map(line => `│ ${line.padEnd(BOX_WIDTH - 2)} │`).join('\n')}
+├${border}┤
+${previewLines.map(line => `│ ${line.padEnd(BOX_WIDTH - 2)} │`).join('\n')}
+├${border}┤
+│ ${'Links and actions:'.padEnd(BOX_WIDTH - 2)} │
 ${links.map(link => `│ ${truncate(link, BOX_WIDTH - 2).padEnd(BOX_WIDTH - 2)} │`).join('\n')}
-└${border}┘
-
-Run 'npm run dev' to launch this project in StackBlitz.`;
+└${border}┘`;
 
   const packageJsonContent = `{
   "name": "${project.id}",
@@ -178,7 +209,12 @@ Run 'npm run dev' to launch this project in StackBlitz.`;
   }
 }`;
 
-  // Create project directory with files
+  projectFiles[project.slug] = {
+    type: 'file',
+    name: project.slug,
+    content: readmeContent
+  };
+
   projectDirs[project.id] = {
     type: 'directory',
     name: project.id,
@@ -216,10 +252,18 @@ export const fileSystem: FileSystemNode = {
       name: 'resume.txt',
       content: resumeContent
     },
+    'skills.txt': {
+      type: 'file',
+      name: 'skills.txt',
+      content: skillsContent
+    },
     'projects': {
       type: 'directory',
       name: 'projects',
-      children: projectDirs
+      children: {
+        ...projectFiles,
+        ...projectDirs
+      }
     },
     'experience': {
       type: 'directory',
@@ -255,7 +299,7 @@ export function resolvePath(path: string, currentDir: string[]): string[] {
 }
 
 export function getNode(path: string[]): FileSystemNode | null {
-  let node: FileSystemNode = fileSystem;
+  let node = fileSystem;
 
   for (const part of path) {
     if (node.type !== 'directory' || !node.children) {

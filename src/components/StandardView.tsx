@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import { projects } from '../data/projects';
+import dynamic from 'next/dynamic';
+import { projects, Project, projectCategories } from '../data/projects';
 import MarketTicker from './MarketTicker';
+
+const StackBlitzEmbed = dynamic(() => import('./StackBlitzEmbed'), { ssr: false });
 
 const ASCII_NAME = `
  ██████╗ ██╗    ██╗███████╗███╗   ██╗    ███████╗██╗███████╗██╗  ██╗███████╗██████╗
@@ -13,32 +16,32 @@ const ASCII_NAME = `
 
 const experiences = [
   {
-    period: 'Sept. 2025 — Present',
+    period: 'Sep. 2025 — May 2026',
     company: 'Royal Bank of Canada',
-    role: 'Quantitative Developer',
-    description: 'Optimized risk assessment by migrating pricing engine from MATLAB to Python + Dask, deploying scalable pipelines that sped up valuations 70% and cut maintenance 50%+. Created comprehensive onboarding documentation using Confluence, cutting onboarding time by 50%.'
+    role: 'Software Engineer',
+    description: 'Migrated legacy MATLAB factor-scoring and preprocessing paths to Python/PySpark on Databricks, preserving backward-compatible outputs while adding caching, multithreading, and regression validation across 500M+ score rows.'
   },
   {
-    period: 'Jan. 2025 — May 2025',
+    period: 'Jan. 2025 — Mar. 2025',
     company: 'Quantico Research',
-    role: 'Quantitative Developer',
-    description: 'Led development of a Hidden Markov Model in Stan with a Python/NumPy interface, slashing seismic risk exposure by 80%. Designed real-time seismic data pipelines in Python using NumPy for vectorized data cleaning. Automated walk-forward validation and stress testing with PyTest inside a CI/CD pipeline.'
+    role: 'Software Engineer',
+    description: 'Provisioned Terraform-managed AWS infrastructure, built Python/NumPy risk-signal pipelines, and automated walk-forward validation and stress testing with Pytest inside CI.'
   },
   {
     period: 'June 2025 — Present',
     company: 'UBC Science Undergraduate Society',
     role: 'Frontend Developer',
-    description: 'Redesigned the Science Undergraduate Society website by implementing 5+ new pages and features. Engineered 10+ reusable components and introduced 15+ design tokens in Next.js/TypeScript.'
+    description: 'Built production Next.js/TypeScript pages and reusable components for student-facing workflows, room bookings, clubs, and events.'
   },
   {
     period: 'May 2025 — Present',
     company: 'UBC Actuarial Science Club',
     role: 'Frontend Engineer',
-    description: 'Built the site with Next.js, React, and Tailwind CSS, increasing member sign-ups by 200%. Led planning and development of the club\'s first website.'
+    description: 'Led the club website build and shipped event/member surfaces in Next.js, React, and Tailwind CSS.'
   }
 ];
 
-type FilterType = 'all' | 'highlighted' | 'hackathon' | 'school';
+type FilterType = typeof projectCategories[number];
 
 interface StandardViewProps {
   onTerminalDemo?: (command: string) => void;
@@ -46,12 +49,19 @@ interface StandardViewProps {
 
 export default function StandardView({ onTerminalDemo }: StandardViewProps) {
   const [filter, setFilter] = useState<FilterType>('all');
+  const [selectedProjectId, setSelectedProjectId] = useState(projects[0]?.id || '');
+  const [sandboxProject, setSandboxProject] = useState<Project | null>(null);
   const [copied, setCopied] = useState(false);
 
   const filteredProjects = projects.filter(project => {
     if (filter === 'all') return true;
     return project.categories.includes(filter);
   });
+
+  const selectedProject =
+    filteredProjects.find(project => project.id === selectedProjectId) ||
+    filteredProjects[0] ||
+    projects[0];
 
   const copyEmail = () => {
     navigator.clipboard.writeText('owenfisher46@gmail.com');
@@ -77,6 +87,23 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
 
     return () => observer.disconnect();
   }, [filter]);
+
+  useEffect(() => {
+    if (filteredProjects.length > 0 && !filteredProjects.some(project => project.id === selectedProjectId)) {
+      setSelectedProjectId(filteredProjects[0].id);
+    }
+  }, [filter, filteredProjects, selectedProjectId]);
+
+  if (sandboxProject?.stackblitz) {
+    return (
+      <StackBlitzEmbed
+        repo={sandboxProject.stackblitz.repo}
+        openFile={sandboxProject.stackblitz.openFile}
+        startScript={sandboxProject.stackblitz.startScript}
+        onClose={() => setSandboxProject(null)}
+      />
+    );
+  }
 
   return (
     <div className="standard-view">
@@ -108,11 +135,11 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
               </p>
 
               <h1 className="hero-title">
-                Quantitative Developer<span className="cursor"></span>
+                Backend Engineer<span className="cursor"></span>
               </h1>
 
               <p className="hero-subtitle">
-                Engineering data-driven solutions for systematic finance.
+                Building Python services, data pipelines, and reliable infrastructure for production systems.
               </p>
 
               <div className="hero-meta">
@@ -122,11 +149,11 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
                 </div>
                 <div className="hero-meta-item">
                   <span className="key">focus:</span>
-                  <span className="value">quantitative development, full-stack</span>
+                  <span className="value">backend engineering, Python, data infrastructure</span>
                 </div>
                 <div className="hero-meta-item">
-                  <span className="key">current:</span>
-                  <span className="value">Royal Bank of Canada</span>
+                  <span className="key">stack:</span>
+                  <span className="value">FastAPI, Kafka, Postgres, Redis, Docker, Databricks, AWS</span>
                 </div>
                 <div className="hero-meta-item">
                   <span className="key">education:</span>
@@ -175,69 +202,109 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
               <h2 className="section-title">Projects</h2>
             </div>
 
-            <div className="project-filters">
-              {(['all', 'highlighted', 'hackathon', 'school'] as FilterType[]).map((f) => (
+            <div className="project-filters" role="tablist" aria-label="Project filters">
+              {projectCategories.map((f) => (
                 <button
                   key={f}
                   className={`filter-btn ${filter === f ? 'active' : ''}`}
                   onClick={() => setFilter(f)}
+                  role="tab"
+                  aria-selected={filter === f}
                 >
                   {f === 'all' ? '*' : ''}{f}
                 </button>
               ))}
             </div>
 
-            <div className="projects-grid">
-              {filteredProjects.map((project) => (
-                <article key={project.id} className="project-card fade-in-section" style={{ transitionDelay: `${filteredProjects.indexOf(project) * 0.05}s` }}>
-                  <div className="project-header">
-                    <h3 className="project-name">{project.title}</h3>
-                    <span className="project-year">{project.year}</span>
+            <div className="project-explorer fade-in-section">
+              <aside className="project-tree" aria-label="Project file tree">
+                <div className="project-tree-header">projects/</div>
+                {filteredProjects.map((project) => (
+                  <button
+                    key={project.id}
+                    className={`project-file ${selectedProject.id === project.id ? 'active' : ''}`}
+                    onClick={() => setSelectedProjectId(project.id)}
+                  >
+                    <span>{project.slug}</span>
+                    <span className="project-file-meta">{project.categories.includes('infra') ? 'infra' : project.categories[0]}</span>
+                  </button>
+                ))}
+              </aside>
+
+              <article className="project-preview" aria-live="polite">
+                <div className="project-preview-topline">
+                  <span>cat projects/{selectedProject.slug}</span>
+                  <span>{selectedProject.year}</span>
+                </div>
+
+                <div className="project-preview-grid">
+                  <div className="project-preview-copy">
+                    <p className="eyebrow">{selectedProject.role}</p>
+                    <h3>{selectedProject.title}</h3>
+                    <p>{selectedProject.description}</p>
+
+                    <div className="project-stack" aria-label={`${selectedProject.title} stack`}>
+                      {selectedProject.stack.map((item) => (
+                        <span key={item}>{item}</span>
+                      ))}
+                    </div>
+
+                    <ul className="project-metrics">
+                      {selectedProject.metrics.map((metric) => (
+                        <li key={metric}>{metric}</li>
+                      ))}
+                    </ul>
+
+                    <div className="project-links project-actions">
+                      {selectedProject.stackblitz && (
+                        <button className="project-link" onClick={() => setSandboxProject(selectedProject)}>
+                          open sandbox
+                        </button>
+                      )}
+                      {selectedProject.terminalDemo && onTerminalDemo && (
+                        <button className="project-link" onClick={() => onTerminalDemo(selectedProject.terminalDemo!)}>
+                          run demo
+                        </button>
+                      )}
+                      {selectedProject.links.github && (
+                        <a href={selectedProject.links.github} target="_blank" rel="noopener noreferrer" className="project-link">
+                          view source
+                        </a>
+                      )}
+                      {selectedProject.links.demo && (
+                        <a href={selectedProject.links.demo} target="_blank" rel="noopener noreferrer" className="project-link">
+                          live demo
+                        </a>
+                      )}
+                      {selectedProject.links.devpost && (
+                        <a href={selectedProject.links.devpost} target="_blank" rel="noopener noreferrer" className="project-link">
+                          devpost
+                        </a>
+                      )}
+                      {selectedProject.links.video && (
+                        <a href={selectedProject.links.video} target="_blank" rel="noopener noreferrer" className="project-link">
+                          video
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  <p className="project-description">{project.description}</p>
-                  <div className="project-categories">
-                    {project.categories.map((cat) => (
-                      <span key={cat} className="project-category">{cat}</span>
-                    ))}
+
+                  <div className={`project-visual project-visual-${selectedProject.visual.type}`}>
+                    <div className="project-visual-header">
+                      <span>{selectedProject.visual.title}</span>
+                      <span>{selectedProject.visual.type}</span>
+                    </div>
+                    {selectedProject.visual.image && (
+                      <img
+                        src={selectedProject.visual.image}
+                        alt={selectedProject.visual.imageAlt || `${selectedProject.title} preview`}
+                        className="project-visual-image"
+                      />
+                    )}
+                    <pre>{selectedProject.visual.lines.join('\n')}</pre>
                   </div>
-                  <div className="project-links">
-                    {project.links.github && (
-                      <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="project-link">
-                        github
-                      </a>
-                    )}
-                    {project.terminalDemo && onTerminalDemo && (
-                      <button
-                        className="project-link"
-                        onClick={() => onTerminalDemo(project.terminalDemo!)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}
-                      >
-                        demo
-                      </button>
-                    )}
-                    {project.links.demo && !project.terminalDemo && (
-                      <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="project-link">
-                        demo
-                      </a>
-                    )}
-                    {project.links.devpost && (
-                      <a href={project.links.devpost} target="_blank" rel="noopener noreferrer" className="project-link">
-                        devpost
-                      </a>
-                    )}
-                    {project.links.video && (
-                      <a href={project.links.video} target="_blank" rel="noopener noreferrer" className="project-link">
-                        video
-                      </a>
-                    )}
-                    {project.links.docs && (
-                      <a href={project.links.docs} target="_blank" rel="noopener noreferrer" className="project-link">
-                        docs
-                      </a>
-                    )}
-                  </div>
-                </article>
-              ))}
+                </div>
+              </article>
             </div>
           </div>
         </section>

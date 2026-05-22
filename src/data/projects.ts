@@ -1,10 +1,22 @@
 export interface Project {
   id: string;
+  slug: string;
   title: string;
   year: string;
+  role: string;
   description: string;
   categories: string[];
-  gradient: string;
+  gradient?: string;
+  stack: string[];
+  metrics: string[];
+  preview: string[];
+  visual: {
+    type: 'terminal' | 'architecture' | 'product';
+    title: string;
+    image?: string;
+    imageAlt?: string;
+    lines: string[];
+  };
   links: {
     github?: string;
     demo?: string;
@@ -12,81 +24,259 @@ export interface Project {
     video?: string;
     docs?: string;
   };
-  // StackBlitz config for runnable projects
   stackblitz?: {
-    repo: string; // GitHub owner/repo
-    openFile?: string; // File to open by default
-    startScript?: string; // npm script to run (default: dev)
+    repo: string;
+    openFile?: string;
+    startScript?: string;
   };
-  // Terminal command to run as a demo (switches to terminal mode)
   terminalDemo?: string;
 }
 
 export const projects: Project[] = [
   {
-    id: 'rehabify',
-    title: 'Rehabify',
-    year: 'Jan. 2026',
-    description: 'nwHacks 2026 1st Place Winner. AI-powered physiotherapy coach using real-time computer vision (MediaPipe) and voice AI to provide instant form correction during home exercises.',
-    categories: ['highlighted', 'hackathon'],
-    gradient: 'linear-gradient(135deg, rgba(107, 255, 193, 0.3), rgba(59, 201, 255, 0.3))',
-    links: {
-      github: 'https://github.com/obro79/Rehabify',
-      devpost: 'https://devpost.com/software/rehabify'
-    }
-  },
-  {
     id: 'flux',
+    slug: 'flux.md',
     title: 'Flux',
     year: 'Mar. 2026',
-    description: 'Real-time data pipeline built with FastAPI, Redpanda (Kafka), Redis, and PostgreSQL. Streams and processes high-throughput event data with async consumers, dockerized microservices, and a Kafka UI for observability.',
-    categories: ['highlighted'],
-    gradient: 'linear-gradient(135deg, rgba(255, 165, 0, 0.3), rgba(255, 69, 0, 0.3))',
+    role: 'Backend / data infrastructure',
+    description: 'Real-time market data pipeline with exchange ingestion, Kafka fan-out, FastAPI read paths, Postgres persistence, Redis-backed indicators, and Prometheus/Grafana observability.',
+    categories: ['highlighted', 'backend', 'infra'],
+    stack: ['Python', 'FastAPI', 'Kafka', 'PostgreSQL', 'Redis', 'Docker', 'Prometheus', 'Grafana'],
+    metrics: ['Exchange-aware ingestion', 'Kafka consumer lag alerts', 'REST + WebSocket APIs', 'DLQ and smoke-test coverage'],
+    preview: [
+      'Built normalized exchange adapters and async consumers around a stable trade schema.',
+      'Separated ingestion, aggregation, indicators, API, and metrics into dockerized services.',
+      'Instrumented throughput, API latency, Redis writes, DLQ volume, and consumer lag.'
+    ],
+    visual: {
+      type: 'architecture',
+      title: 'pipeline topology',
+      lines: [
+        'Coinbase/Kraken -> adapters -> Kafka: market_trades',
+        'market_trades -> candle consumer -> PostgreSQL',
+        'market_trades -> indicator engine -> Redis',
+        'FastAPI -> /markets /candles /crypto /indicators',
+        'Prometheus -> Grafana panels + alert rules'
+      ]
+    },
     links: {
       github: 'https://github.com/obro79/Flux'
     },
     terminalDemo: 'run flux'
   },
   {
-    id: 'prepme',
-    title: 'PrepMe',
-    year: 'May 2025',
-    description: 'Built AI voice interviewer with real-time speech, transcripts, and 100 Lighthouse accessibility score.',
-    categories: ['all'],
-    gradient: 'linear-gradient(135deg, rgba(124, 108, 255, 0.3), rgba(59, 201, 255, 0.3))',
-    links: {
-      github: 'https://github.com/obro79/mock_interview_ai',
-      demo: 'https://mock-interview-ai-git-main-owens-projects-e5b63a60.vercel.app/sign-in'
+    id: 'cortex',
+    slug: 'cortex.md',
+    title: 'Cortex',
+    year: 'May 2026',
+    role: 'Backend platform skeleton',
+    description: 'Production-shaped Python backend spine for knowledge infrastructure: FastAPI app factory, typed configuration, CLI entrypoints, worker contracts, lazy clients, and smoke-testable local infrastructure.',
+    categories: ['highlighted', 'backend', 'infra'],
+    stack: ['Python', 'FastAPI', 'Pydantic', 'Pytest', 'Docker Compose', 'Ruff', 'Mypy'],
+    metrics: ['Factory API entrypoint', 'CLI and worker commands', 'Tests pass without external services', 'Local infra contracts documented'],
+    preview: [
+      'Built the application spine before adding risky connectors or retrieval behavior.',
+      'Kept external dependencies lazy so local tests and CI do not require live services.',
+      'Established typed contracts for API, config, worker roles, and future ingestion surfaces.'
+    ],
+    visual: {
+      type: 'terminal',
+      title: 'local validation',
+      lines: [
+        '$ cortex doctor',
+        'config: ok',
+        'api factory: ok',
+        'worker role=noop: ok',
+        '$ ruff check . && mypy src && pytest',
+        'all checks passed'
+      ]
     },
-    stackblitz: {
-      repo: 'obro79/mock_interview_ai',
-      openFile: 'src/app/page.tsx'
+    links: {
+      github: 'https://github.com/obro79/cortex'
     }
   },
   {
-    id: 'financely',
-    title: 'Financely',
-    year: 'June 2025',
-    description: 'Configured Vercel CI/CD pipeline to auto-build/test/deploy, cutting manual release steps 75%. Built ETL services in Python/Node to load transactions into SQL.',
-    categories: ['all'],
-    gradient: 'linear-gradient(135deg, rgba(255, 107, 170, 0.3), rgba(124, 108, 255, 0.3))',
-    links: {
-      github: 'https://github.com/obro79/financely',
-      demo: 'https://financely-nine.vercel.app/sign-in',
-      docs: 'https://noisy-pansy-2e8.notion.site/Financely-1eab9c27045980579544ce5e4f96ed55'
+    id: 'tower',
+    slug: 'tower.md',
+    title: 'Tower',
+    year: 'Oct. 2025',
+    role: 'Local-network backend + CLI',
+    description: 'Privacy-first file discovery and sync system with a FastAPI metadata registry, SQLite storage, TypeScript CLI, watched directories, wildcard search, and SCP-based transfer flow.',
+    categories: ['highlighted', 'backend', 'infra'],
+    stack: ['Python', 'FastAPI', 'SQLite', 'TypeScript', 'Node.js', 'SCP', 'SSH'],
+    metrics: ['Metadata-only backend', 'Cross-device search', 'Watched directory sync', 'Direct file transfer flow'],
+    preview: [
+      'Designed the backend as a coordinator that stores metadata instead of user files.',
+      'Built CLI commands for init, watch, sync, search, and get workflows.',
+      'Optimized for low-latency private networks and recoverable local setup.'
+    ],
+    visual: {
+      type: 'architecture',
+      title: 'transfer model',
+      lines: [
+        'Device A CLI -> FastAPI registry -> SQLite metadata',
+        'Device B CLI -> search "*.pdf"',
+        'registry returns source host + file id',
+        'transfer uses SCP; files stay on source device'
+      ]
     },
-    stackblitz: {
-      repo: 'obro79/financely',
-      openFile: 'src/app/page.tsx'
+    links: {
+      github: 'https://github.com/obro79/Tower',
+      devpost: 'https://devpost.com/software/tower-zk0875'
+    }
+  },
+  {
+    id: 'maintaineros',
+    slug: 'maintaineros.md',
+    title: 'MaintainerOS',
+    year: 'May 2026',
+    role: 'Workflow backend + verification gates',
+    description: 'Repo-native work-routing system that imports GitHub issue backlogs, classifies work lanes, prepares agent context, and keeps PR verification and bounty payout proof behind review gates.',
+    categories: ['highlighted', 'backend'],
+    stack: ['TypeScript', 'Next.js', 'PostgreSQL', 'Neon', 'GitHub API', 'Provider adapters'],
+    metrics: ['Issue import workflows', 'AI/DEV/CLARIFY/BOUNTY lanes', 'Verification evidence gates', 'Fixture and live data modes'],
+    preview: [
+      'Modeled automation as proposals that remain behind explicit maintainer acceptance.',
+      'Added provider boundaries for GitHub import, verification, and payout surfaces.',
+      'Kept fixture mode available for demos while supporting live repository imports.'
+    ],
+    visual: {
+      type: 'architecture',
+      title: 'trust boundary',
+      image: '/projects/maintaineros.png',
+      imageAlt: 'MaintainerOS product mark',
+      lines: [
+        'issue -> route -> context pack',
+        'context pack -> agent attempt or contributor task',
+        'PR -> verification evidence',
+        'maintainer acceptance -> merge or payout'
+      ]
+    },
+    links: {
+      github: 'https://github.com/obro79/maintainerOS'
+    }
+  },
+  {
+    id: 'recruit',
+    slug: 'recruit.md',
+    title: 'Recruit',
+    year: 'Apr. 2026',
+    role: 'Automation backend',
+    description: 'Supervised job-application automation system spanning job ingestion, fit ranking, role research, tailored artifacts, browser automation, dead-letter review, and follow-up workflows.',
+    categories: ['backend', 'automation'],
+    stack: ['Python', 'TypeScript', 'Playwright', 'Browserbase', 'Search', 'Embeddings'],
+    metrics: ['500+ roles ingested', 'BM25 + rules + reranking', 'Human-review dead letters', 'ATS automation pipeline'],
+    preview: [
+      'Separated high-confidence automation from sensitive answers that require review.',
+      'Built ranking from hard filters, lexical search, embeddings, and reranking.',
+      'Tracked application state from discovery through follow-up.'
+    ],
+    visual: {
+      type: 'product',
+      title: 'application pipeline',
+      image: '/projects/recruit-dashboard.png',
+      imageAlt: 'Recruit application automation dashboard',
+      lines: [
+        'ingest ats_feeds --limit 500',
+        'filter hard_mismatches',
+        'rank bm25 + rules + embeddings',
+        'generate resume.pdf + role_notes.md',
+        'submit supervised_browser_job -> review queue'
+      ]
+    },
+    links: {
+      github: 'https://github.com/obro79/recruit',
+      demo: 'https://recruit-main-beryl.vercel.app'
+    }
+  },
+  {
+    id: 'rehabify',
+    slug: 'rehabify.md',
+    title: 'Rehabify',
+    year: 'Jan. 2026',
+    role: 'Real-time AI workflow',
+    description: 'nwHacks 2026 1st Place Winner. Real-time physiotherapy coach combining computer vision, speech-to-text, LLM feedback, and text-to-speech into a live coaching loop.',
+    categories: ['highlighted', 'hackathon'],
+    stack: ['TypeScript', 'MediaPipe', 'Deepgram', 'Gemini', 'ElevenLabs', 'Realtime UX'],
+    metrics: ['1st overall at nwHacks', 'Sub-second demo feedback loop', 'Session and rep state model', 'Voice + vision orchestration'],
+    preview: [
+      'Integrated multiple realtime providers into one coaching workflow.',
+      'Owned session state for exercises, reps, and generated coaching events.',
+      'Balanced product polish with reliable demo latency during a hackathon build.'
+    ],
+    visual: {
+      type: 'product',
+      title: 'live coaching loop',
+      image: '/projects/rehabify-landing.png',
+      imageAlt: 'Rehabify realtime physical therapy coaching interface',
+      lines: [
+        'camera frame -> pose landmarks',
+        'voice prompt -> STT transcript',
+        'exercise state -> coaching event',
+        'feedback -> TTS response + UI cue'
+      ]
+    },
+    links: {
+      github: 'https://github.com/obro79/Rehabify',
+      devpost: 'https://devpost.com/software/rehabify-y2f5mu',
+      video: 'https://www.youtube.com/watch?v=gXh_Ct_AQGU'
+    }
+  },
+  {
+    id: 'option-pricing',
+    slug: 'option-pricing.md',
+    title: 'Option Strategy App',
+    year: 'Sept. 2025',
+    role: 'Python analytics app',
+    description: 'Streamlit analytics tool for simulating options strategies, visualizing profit/loss profiles, and exploring pricing/risk scenarios with vectorized Python models.',
+    categories: ['backend', 'analytics'],
+    stack: ['Python', 'Streamlit', 'NumPy', 'Pandas', 'Plotly', 'Monte Carlo'],
+    metrics: ['Black-Scholes models', 'Monte Carlo pricing', 'Interactive risk dashboards', 'Vectorized pricing loops'],
+    preview: [
+      'Implemented pricing models and strategy simulations in Python.',
+      'Exposed risk views through interactive dashboards for faster scenario exploration.',
+      'Kept the app lightweight enough to run as a hosted Streamlit demo.'
+    ],
+    visual: {
+      type: 'product',
+      title: 'pricing workflow',
+      lines: [
+        'input underlying / strike / vol / expiry',
+        'compute Black-Scholes + Monte Carlo scenarios',
+        'render P&L curve + risk attribution',
+        'compare strategy legs interactively'
+      ]
+    },
+    links: {
+      github: 'https://github.com/obro79/optionStrategyApp',
+      demo: 'https://optitrade.streamlit.app'
     }
   },
   {
     id: 'echome',
+    slug: 'echome.md',
     title: 'EchoMe',
-    year: 'Jan. 2025',
-    description: 'Voice-driven application builder that generates full-stack apps from natural language descriptions. Built with Next.js and AI-powered code generation for rapid prototyping.',
-    categories: ['highlighted', 'hackathon'],
-    gradient: 'linear-gradient(135deg, rgba(45, 55, 72, 0.3), rgba(74, 85, 104, 0.3))',
+    year: 'Jan. 2026',
+    role: 'Voice-to-deploy app builder',
+    description: 'Hackathon project that turns spoken product ideas into generated full-stack web apps and deploys them to Vercel from a guided creation flow.',
+    categories: ['hackathon', 'automation'],
+    stack: ['TypeScript', 'Next.js', 'Speech input', 'Claude API', 'Vercel'],
+    metrics: ['Voice-first creation flow', 'Generated full-stack projects', 'Vercel deployment path', 'Demo video available'],
+    preview: [
+      'Built a voice-driven interface around code generation and deployment.',
+      'Optimized for fast demos: idea capture, generation, preview, and deploy.',
+      'Kept the workflow understandable for non-technical users.'
+    ],
+    visual: {
+      type: 'product',
+      title: 'voice deployment flow',
+      lines: [
+        'speak app idea',
+        'generate code with Claude',
+        'preview Next.js project',
+        'deploy to Vercel'
+      ]
+    },
     links: {
       github: 'https://github.com/obro79/stormhacks',
       demo: 'https://stormhacks-three.vercel.app',
@@ -99,51 +289,49 @@ export const projects: Project[] = [
     }
   },
   {
-    id: 'option-pricing',
-    title: 'Option Pricing & Portfolio Management Web App',
-    year: 'Sept. 2025',
-    description: 'Implemented Black-Scholes and Monte Carlo pricing models with 4x faster vectorized loops. Delivered interactive portfolio dashboards surfacing pricing results, portfolio metrics, and risk attribution.',
-    categories: ['all'],
-    gradient: 'linear-gradient(135deg, rgba(59, 201, 255, 0.3), rgba(107, 255, 193, 0.3))',
+    id: 'prepme',
+    slug: 'prepme.md',
+    title: 'PrepMe',
+    year: 'May 2025',
+    role: 'Realtime interview app',
+    description: 'AI voice interviewer with live transcripts, call state, and feedback, built as a polished full-stack interview practice experience.',
+    categories: ['automation'],
+    stack: ['TypeScript', 'Next.js', 'Vapi', 'Realtime voice', 'Accessibility'],
+    metrics: ['Live transcript loop', 'Call-state UI', 'Feedback generation', '100 Lighthouse accessibility score'],
+    preview: [
+      'Built interview state around live voice sessions and transcript events.',
+      'Designed the interface to make live call state legible and recoverable.',
+      'Kept the project runnable in a browser-based source sandbox.'
+    ],
+    visual: {
+      type: 'product',
+      title: 'voice session state',
+      lines: [
+        'idle -> connecting -> live call',
+        'audio stream -> transcript',
+        'transcript -> feedback summary',
+        'session history -> review'
+      ]
+    },
     links: {
-      github: 'https://github.com/obro79/optionStrategyApp',
-      demo: 'https://optitrade.streamlit.app'
-    }
-  },
-  {
-    id: 'tower',
-    title: 'Tower',
-    year: 'Oct. 2025',
-    description: 'Cross-device file sync and discovery tool for local networks. Privacy-first file sharing with lightweight central registry tracking metadata for instant discovery and transfer without cloud dependencies.',
-    categories: ['hackathon'],
-    gradient: 'linear-gradient(135deg, rgba(147, 112, 219, 0.3), rgba(186, 85, 211, 0.3))',
-    links: {
-      github: 'https://github.com/obro79/Tower',
-      devpost: 'https://devpost.com/software/tower-zk0875'
-    }
-  },
-  {
-    id: 'pantry-pal',
-    title: 'Pantry Pal',
-    year: 'Jan. 2025',
-    description: 'Grocery list and meal-planning app reducing food waste by tracking expiry dates and suggesting recipes. Built with React, TypeScript, Flask, and OpenAI API for receipt scanning and smart recipe recommendations.',
-    categories: ['hackathon'],
-    gradient: 'linear-gradient(135deg, rgba(72, 187, 120, 0.3), rgba(56, 161, 105, 0.3))',
-    links: {
-      github: 'https://github.com/kliu04/nwhacks25',
-      demo: 'https://pantrypaldeploy.vercel.app',
-      devpost: 'https://devpost.com/software/pantrypal-2gnrdz'
-    }
-  },
-  {
-    id: 'staff-scheduler',
-    title: 'Staff Scheduler',
-    year: 'Apr. 2024',
-    description: 'Java-based restaurant scheduling system that automatically generates employee schedules based on availability, job roles, and staffing requirements. Features GUI, data persistence, and event logging.',
-    categories: ['school'],
-    gradient: 'linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(219, 39, 119, 0.3))',
-    links: {
-      github: 'https://github.com/obro79/staffScheduling1.0'
+      github: 'https://github.com/obro79/mock_interview_ai',
+      demo: 'https://mock-interview-ai-git-main-owens-projects-e5b63a60.vercel.app/sign-in'
+    },
+    stackblitz: {
+      repo: 'obro79/mock_interview_ai',
+      openFile: 'src/app/page.tsx'
     }
   }
 ];
+
+export const projectCategories = ['all', 'backend', 'infra', 'hackathon', 'automation', 'analytics'] as const;
+
+export function findProject(query?: string): Project | undefined {
+  if (!query) return undefined;
+  const normalized = query.replace(/^projects\//, '').replace(/\.md$/, '').toLowerCase();
+  return projects.find((project) =>
+    project.id === normalized ||
+    project.slug.replace(/\.md$/, '') === normalized ||
+    project.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') === normalized
+  );
+}

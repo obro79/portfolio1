@@ -39,8 +39,8 @@ export default function Home() {
     return (
       <>
         <Head>
-          <title>Owen Fisher · Developer Portfolio</title>
-          <meta name="description" content="Quantitative developer portfolio for Owen Fisher showcasing projects, experience, and contact information." />
+          <title>Owen Fisher · Backend Engineer</title>
+          <meta name="description" content="Backend and infrastructure portfolio for Owen Fisher, focused on Python services, data pipelines, FastAPI, Kafka, Postgres, Redis, Docker, Databricks, and AWS." />
         </Head>
         <div style={{
           minHeight: '100vh',
@@ -58,8 +58,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Owen Fisher · Developer Portfolio</title>
-        <meta name="description" content="Quantitative developer portfolio for Owen Fisher showcasing projects, experience, and contact information." />
+        <title>Owen Fisher · Backend Engineer</title>
+        <meta name="description" content="Backend and infrastructure portfolio for Owen Fisher, focused on Python services, data pipelines, FastAPI, Kafka, Postgres, Redis, Docker, Databricks, and AWS." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌨️</text></svg>" />
       </Head>
