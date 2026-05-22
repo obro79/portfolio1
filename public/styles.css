@@ -768,13 +768,6 @@ a:hover {
   padding-bottom: var(--spacing-md);
 }
 
-.project-preview-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.78fr);
-  gap: var(--spacing-lg);
-  align-items: start;
-}
-
 .project-preview-copy .eyebrow {
   font-size: 18px;
 }
@@ -824,92 +817,6 @@ a:hover {
   cursor: pointer;
   font-family: var(--font-mono);
   padding: 0;
-}
-
-.project-visual {
-  border: 1px solid var(--border);
-  background:
-    linear-gradient(180deg, rgba(0, 212, 255, 0.06), transparent 40%),
-    var(--bg);
-  min-height: 420px;
-  overflow: hidden;
-}
-
-.project-visual-header {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  border-bottom: 1px solid var(--border);
-  color: var(--text-muted);
-  font-size: 15px;
-}
-
-.project-visual-header span:first-child {
-  color: var(--accent);
-}
-
-.project-media {
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-dark);
-}
-
-.project-visual-image {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 520px;
-  object-fit: contain;
-  object-position: top center;
-  background: var(--bg-dark);
-}
-
-.project-visual-architecture .project-visual-image {
-  object-fit: contain;
-}
-
-.project-media-strip {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm);
-  background: var(--bg);
-}
-
-.project-media-thumb {
-  min-width: 0;
-  padding: 0;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  color: var(--text-muted);
-  cursor: pointer;
-  font-family: var(--font-mono);
-  overflow: hidden;
-  text-align: left;
-}
-
-.project-media-thumb:hover,
-.project-media-thumb.active {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.project-media-thumb img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: contain;
-  object-position: top center;
-  background: var(--bg-dark);
-}
-
-.project-media-thumb span {
-  display: block;
-  padding: 4px 6px;
-  overflow: hidden;
-  font-size: 11px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* GitHub Contributions */
@@ -1041,132 +948,6 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 5px;
-}
-
-.project-visual pre {
-  margin: 0;
-  padding: var(--spacing-lg);
-  white-space: pre-wrap;
-  color: var(--text-dim);
-  font-size: 17px;
-  line-height: 1.75;
-}
-
-.pipeline-visual {
-  display: grid;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-}
-
-.pipeline-diagram {
-  display: grid;
-  gap: var(--spacing-md);
-  border: 1px solid var(--border);
-  background: var(--bg-dark);
-  padding: var(--spacing-sm);
-}
-
-.pipeline-graph {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  grid-template-areas:
-    "source compute stream compute2 storage"
-    "source compute stream compute3 storage2"
-    "empty api api observe observe2";
-  gap: var(--spacing-sm);
-}
-
-.pipeline-node {
-  min-height: 78px;
-  padding: var(--spacing-sm);
-  border: 1px solid var(--border);
-  background: rgba(0, 212, 255, 0.05);
-  position: relative;
-}
-
-.pipeline-node::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: calc(-1 * var(--spacing-sm));
-  width: var(--spacing-sm);
-  border-top: 1px dashed var(--accent);
-}
-
-.pipeline-node:nth-child(5)::after,
-.pipeline-node:nth-child(7)::after,
-.pipeline-node:nth-child(10)::after {
-  content: none;
-}
-
-.pipeline-node-source { grid-area: source; }
-.pipeline-node-stream { grid-area: stream; }
-.pipeline-node-api { grid-area: api; }
-
-.pipeline-node-compute:nth-of-type(2) { grid-area: compute; }
-.pipeline-node-compute:nth-of-type(4) { grid-area: compute2; }
-.pipeline-node-compute:nth-of-type(6) { grid-area: compute3; }
-.pipeline-node-storage:nth-of-type(5) { grid-area: storage; }
-.pipeline-node-storage:nth-of-type(7) { grid-area: storage2; }
-.pipeline-node-observability:nth-of-type(9) { grid-area: observe; }
-.pipeline-node-observability:nth-of-type(10) { grid-area: observe2; }
-
-.pipeline-node span {
-  display: block;
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.pipeline-node small {
-  display: block;
-  margin-top: 6px;
-  color: var(--text-muted);
-  font-size: 11px;
-  line-height: 1.35;
-}
-
-.pipeline-edge-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--spacing-xs);
-}
-
-.pipeline-edge {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  color: var(--text-dim);
-  font-size: 11px;
-}
-
-.pipeline-edge span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.pipeline-edge-arrow {
-  color: var(--accent);
-}
-
-.pipeline-edge small {
-  grid-column: 1 / -1;
-  color: var(--text-muted);
-}
-
-.pipeline-console {
-  display: grid;
-  gap: 6px;
-  color: var(--text-dim);
-  font-size: 13px;
-}
-
-.pipeline-console span {
-  min-width: 0;
 }
 
 .project-header {
@@ -1596,8 +1377,7 @@ a:hover {
     flex: 0 0 auto;
   }
 
-  .project-explorer,
-  .project-preview-grid {
+  .project-explorer {
     grid-template-columns: 1fr;
   }
 
@@ -1637,46 +1417,12 @@ a:hover {
 
   .project-preview-copy .eyebrow,
   .project-preview-copy > p,
-  .project-metrics,
-  .project-visual pre,
-  .pipeline-console {
+  .project-metrics {
     font-size: 14px;
   }
 
-  .project-preview-topline,
-  .project-visual-header {
+  .project-preview-topline {
     font-size: 12px;
-  }
-
-  .project-visual {
-    min-height: auto;
-  }
-
-  .project-visual-image {
-    max-height: 220px;
-  }
-
-  .project-media-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .pipeline-graph,
-  .pipeline-edge-list {
-    grid-template-columns: 1fr;
-    grid-template-areas: none;
-  }
-
-  .pipeline-node {
-    grid-area: auto !important;
-    min-height: auto;
-  }
-
-  .pipeline-node::after {
-    content: none;
-  }
-
-  .pipeline-edge {
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   }
 
   .contrib-panel {
@@ -1750,10 +1496,6 @@ a:hover {
 
   .project-stack span {
     font-size: 12px;
-  }
-
-  .project-media-strip {
-    grid-template-columns: 1fr;
   }
 
   .contact-email {

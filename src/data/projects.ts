@@ -13,7 +13,6 @@ export interface Project {
   visual: {
     type: 'terminal' | 'architecture' | 'product';
     title: string;
-    variant?: 'pipeline';
     image?: string;
     imageAlt?: string;
     media?: {
@@ -22,28 +21,6 @@ export interface Project {
       alt: string;
     }[];
     lines: string[];
-    stages?: {
-      label: string;
-      detail: string;
-    }[];
-    flows?: {
-      from: string;
-      to: string;
-      label: string;
-    }[];
-    diagram?: {
-      nodes: {
-        id: string;
-        label: string;
-        detail: string;
-        lane: 'source' | 'stream' | 'compute' | 'storage' | 'api' | 'observability';
-      }[];
-      edges: {
-        from: string;
-        to: string;
-        label: string;
-      }[];
-    };
   };
   links: {
     github?: string;
@@ -77,41 +54,16 @@ export const projects: Project[] = [
       'Instrumented throughput, API latency, Redis writes, DLQ volume, and consumer lag.'
     ],
     visual: {
-      type: 'architecture',
-      title: 'pipeline topology',
-      variant: 'pipeline',
-      diagram: {
-        nodes: [
-          { id: 'exchanges', label: 'Coinbase / Kraken', detail: 'exchange feeds', lane: 'source' },
-          { id: 'adapters', label: 'Adapters', detail: 'normalize trades', lane: 'compute' },
-          { id: 'kafka', label: 'Kafka', detail: 'market_trades', lane: 'stream' },
-          { id: 'candles', label: 'Candle Consumer', detail: 'OHLC windows', lane: 'compute' },
-          { id: 'postgres', label: 'PostgreSQL', detail: 'durable candles', lane: 'storage' },
-          { id: 'indicators', label: 'Indicator Engine', detail: 'live signals', lane: 'compute' },
-          { id: 'redis', label: 'Redis', detail: 'hot indicator cache', lane: 'storage' },
-          { id: 'fastapi', label: 'FastAPI', detail: '/markets /candles /crypto /indicators', lane: 'api' },
-          { id: 'prometheus', label: 'Prometheus', detail: 'latency + lag metrics', lane: 'observability' },
-          { id: 'grafana', label: 'Grafana', detail: 'panels + alert rules', lane: 'observability' }
-        ],
-        edges: [
-          { from: 'exchanges', to: 'adapters', label: 'raw ticks' },
-          { from: 'adapters', to: 'kafka', label: 'publish trades' },
-          { from: 'kafka', to: 'candles', label: 'consume trades' },
-          { from: 'candles', to: 'postgres', label: 'persist candles' },
-          { from: 'kafka', to: 'indicators', label: 'consume trades' },
-          { from: 'indicators', to: 'redis', label: 'cache signals' },
-          { from: 'postgres', to: 'fastapi', label: 'historical reads' },
-          { from: 'redis', to: 'fastapi', label: 'live reads' },
-          { from: 'fastapi', to: 'prometheus', label: 'scrape metrics' },
-          { from: 'prometheus', to: 'grafana', label: 'alert queries' }
-        ]
-      },
+      type: 'terminal',
+      title: 'service trace',
       lines: [
-        'docker compose up --build',
-        'adapters publish market_trades',
-        'consumers write candles + indicators',
-        'api exposes /markets /candles /indicators',
-        'prometheus scrapes api + consumer lag'
+        '$ docker compose up kafka postgres redis api workers',
+        '[adapters] coinbase connected; kraken connected',
+        '[kafka] market_trades topic online; partitions=6',
+        '[consumer:candles] writing OHLC windows -> PostgreSQL',
+        '[consumer:indicators] publishing RSI/MACD snapshots -> Redis',
+        '[api] GET /markets /candles /crypto /indicators healthy',
+        '[metrics] consumer_lag=0 api_p95=42ms dlq=0'
       ]
     },
     links: {

@@ -217,29 +217,25 @@ export function ProjectsSection({
               <span>{selectedProject.year}</span>
             </div>
 
-            <div className="project-preview-grid">
-              <div className="project-preview-copy">
-                <p className="eyebrow">{selectedProject.role}</p>
-                <h3>{selectedProject.title}</h3>
-                <p>{selectedProject.description}</p>
-                <div className="project-stack" aria-label={`${selectedProject.title} stack`}>
-                  {selectedProject.stack.map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
-                </div>
-                <ul className="project-metrics">
-                  {selectedProject.metrics.map((metric) => (
-                    <li key={metric}>{metric}</li>
-                  ))}
-                </ul>
-                <ProjectActions
-                  project={selectedProject}
-                  onOpenSandbox={onOpenSandbox}
-                  onTerminalDemo={onTerminalDemo}
-                />
+            <div className="project-preview-copy">
+              <p className="eyebrow">{selectedProject.role}</p>
+              <h3>{selectedProject.title}</h3>
+              <p>{selectedProject.description}</p>
+              <div className="project-stack" aria-label={`${selectedProject.title} stack`}>
+                {selectedProject.stack.map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
               </div>
-
-              <ProjectVisual project={selectedProject} />
+              <ul className="project-metrics">
+                {selectedProject.metrics.map((metric) => (
+                  <li key={metric}>{metric}</li>
+                ))}
+              </ul>
+              <ProjectActions
+                project={selectedProject}
+                onOpenSandbox={onOpenSandbox}
+                onTerminalDemo={onTerminalDemo}
+              />
             </div>
           </article>
         </div>
@@ -289,106 +285,6 @@ function ProjectActions({
           video
         </a>
       )}
-    </div>
-  );
-}
-
-function ProjectVisual({ project }: { project: Project }) {
-  const media = project.visual.media || (
-    project.visual.image
-      ? [{ src: project.visual.image, title: project.visual.title, alt: project.visual.imageAlt || `${project.title} preview` }]
-      : []
-  );
-  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
-  const activeMedia = media[activeMediaIndex] || media[0];
-
-  useEffect(() => {
-    setActiveMediaIndex(0);
-  }, [project.id]);
-
-  return (
-    <div className={`project-visual project-visual-${project.visual.type}`}>
-      <div className="project-visual-header">
-        <span>{activeMedia?.title || project.visual.title}</span>
-        <span>{project.visual.type}</span>
-      </div>
-      {activeMedia && (
-        <div className="project-media">
-          <img
-            src={activeMedia.src}
-            alt={activeMedia.alt}
-            className="project-visual-image"
-          />
-          {media.length > 1 && (
-            <div className="project-media-strip" aria-label={`${project.title} media`}>
-              {media.slice(0, 4).map((item, index) => (
-                <button
-                  key={item.src}
-                  className={`project-media-thumb ${index === activeMediaIndex ? 'active' : ''}`}
-                  onClick={() => setActiveMediaIndex(index)}
-                  aria-label={`Show ${item.title}`}
-                  type="button"
-                >
-                  <img src={item.src} alt="" />
-                  <span>{item.title}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-      {project.visual.variant === 'pipeline' && project.visual.diagram ? (
-        <PipelineVisual
-          diagram={project.visual.diagram}
-          lines={project.visual.lines}
-        />
-      ) : (
-        <pre>{project.visual.lines.join('\n')}</pre>
-      )}
-    </div>
-  );
-}
-
-function PipelineVisual({
-  diagram,
-  lines
-}: {
-  diagram: NonNullable<Project['visual']['diagram']>;
-  lines: string[];
-}) {
-  const nodeById = new Map(diagram.nodes.map((node) => [node.id, node]));
-
-  return (
-    <div className="pipeline-visual" aria-label="Pipeline architecture diagram">
-      <div className="pipeline-diagram">
-        <div className="pipeline-graph">
-          {diagram.nodes.map((node) => (
-            <div className={`pipeline-node pipeline-node-${node.lane}`} key={node.id}>
-              <span>{node.label}</span>
-              <small>{node.detail}</small>
-            </div>
-          ))}
-        </div>
-
-        <div className="pipeline-edge-list">
-          {diagram.edges.map((edge) => (
-            <div className="pipeline-edge" key={`${edge.from}-${edge.to}-${edge.label}`}>
-              <span>{nodeById.get(edge.from)?.label || edge.from}</span>
-              <span className="pipeline-edge-arrow">-&gt;</span>
-              <span>{nodeById.get(edge.to)?.label || edge.to}</span>
-              <small>{edge.label}</small>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="pipeline-console">
-        {lines.map((line) => (
-          <span key={line}>
-            <span className="term-accent">$</span> {line}
-          </span>
-        ))}
-      </div>
     </div>
   );
 }
