@@ -768,48 +768,6 @@ a:hover {
   padding-bottom: var(--spacing-md);
 }
 
-.project-overview-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-xl);
-}
-
-.project-overview-card {
-  min-height: 76px;
-  padding: var(--spacing-sm);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  cursor: pointer;
-  font-family: var(--font-mono);
-  text-align: left;
-  transition: all 0.2s ease;
-}
-
-.project-overview-card:hover,
-.project-overview-card.active {
-  border-color: var(--accent);
-  background: var(--accent-glow);
-  color: var(--text);
-}
-
-.project-overview-card span {
-  display: block;
-}
-
-.project-overview-card span:first-child {
-  color: var(--text);
-  font-size: 14px;
-  margin-bottom: var(--spacing-xs);
-}
-
-.project-overview-card span:last-child {
-  color: var(--text-muted);
-  font-size: 11px;
-  line-height: 1.35;
-}
-
 .project-preview-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(420px, 0.85fr);
@@ -893,20 +851,21 @@ a:hover {
 
 .project-media {
   border-bottom: 1px solid var(--border);
+  background: var(--bg-dark);
 }
 
 .project-visual-image {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 10;
-  max-height: 430px;
-  object-fit: cover;
+  aspect-ratio: 16 / 9;
+  max-height: 520px;
+  object-fit: contain;
   object-position: top center;
   background: var(--bg-dark);
 }
 
 .project-visual-architecture .project-visual-image {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .project-media-strip {
@@ -939,14 +898,9 @@ a:hover {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
-  object-fit: cover;
+  object-fit: contain;
   object-position: top center;
-  opacity: 0.7;
-}
-
-.project-media-thumb.active img,
-.project-media-thumb:hover img {
-  opacity: 1;
+  background: var(--bg-dark);
 }
 
 .project-media-thumb span {
@@ -1546,17 +1500,6 @@ a:hover {
     padding: var(--spacing-md);
   }
 
-  .project-overview-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--spacing-xs);
-    margin-bottom: var(--spacing-lg);
-  }
-
-  .project-overview-card {
-    min-height: 68px;
-    padding: var(--spacing-sm);
-  }
-
   .project-tree-header {
     font-size: 14px;
     margin-bottom: var(--spacing-sm);
@@ -1656,7 +1599,6 @@ a:hover {
     content: '';
   }
 
-  .project-overview-grid,
   .market-grid {
     grid-template-columns: 1fr;
   }

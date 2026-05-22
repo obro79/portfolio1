@@ -155,8 +155,7 @@ export const projects: Project[] = [
       media: [
         { src: '/projects/maintaineros-home.png', title: 'home', alt: 'MaintainerOS homepage screenshot' },
         { src: '/projects/maintaineros-connect.png', title: 'connect', alt: 'MaintainerOS GitHub connect screenshot' },
-        { src: '/projects/maintaineros-docs.png', title: 'docs', alt: 'MaintainerOS docs screenshot' },
-        { src: '/projects/maintaineros-devpost.png', title: 'devpost', alt: 'MaintainerOS Devpost thumbnail' }
+        { src: '/projects/maintaineros-docs.png', title: 'docs', alt: 'MaintainerOS docs screenshot' }
       ],
       lines: [
         'issue -> route -> context pack',
@@ -193,8 +192,7 @@ export const projects: Project[] = [
       media: [
         { src: '/projects/recruit-dashboard.png', title: 'dashboard', alt: 'Recruit dashboard screenshot' },
         { src: '/projects/recruit-queue.png', title: 'queue', alt: 'Recruit applications queue screenshot' },
-        { src: '/projects/recruit-architecture.png', title: 'system', alt: 'Recruit system architecture diagram' },
-        { src: '/projects/recruit-devpost.png', title: 'devpost', alt: 'Recruit Devpost thumbnail' }
+        { src: '/projects/recruit-architecture.png', title: 'system', alt: 'Recruit system architecture diagram' }
       ],
       lines: [
         'ingest ats_feeds --limit 500',
@@ -232,8 +230,7 @@ export const projects: Project[] = [
       imageAlt: 'Rehabify landing page screenshot',
       media: [
         { src: '/projects/rehabify-landing.png', title: 'landing', alt: 'Rehabify landing page screenshot' },
-        { src: '/projects/rehabify-demo.webp', title: 'demo', alt: 'Rehabify exercise demo image' },
-        { src: '/projects/rehabify-devpost.png', title: 'devpost', alt: 'Rehabify Devpost thumbnail' }
+        { src: '/projects/rehabify-demo.webp', title: 'demo', alt: 'Rehabify exercise demo image' }
       ],
       lines: [
         'camera frame -> pose landmarks',

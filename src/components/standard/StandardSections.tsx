@@ -217,19 +217,6 @@ export function ProjectsSection({
               <span>{selectedProject.year}</span>
             </div>
 
-            <div className="project-overview-grid" aria-label="Project overview">
-              {filteredProjects.map((project) => (
-                <button
-                  key={project.id}
-                  className={`project-overview-card ${selectedProject.id === project.id ? 'active' : ''}`}
-                  onClick={() => onProjectSelect(project.id)}
-                >
-                  <span>{project.title}</span>
-                  <span>{project.role}</span>
-                </button>
-              ))}
-            </div>
-
             <div className="project-preview-grid">
               <div className="project-preview-copy">
                 <p className="eyebrow">{selectedProject.role}</p>
