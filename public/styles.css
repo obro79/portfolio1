@@ -696,13 +696,13 @@ a:hover {
 
 /* Projects Section */
 .projects-container {
-  width: min(1500px, calc(100% - 4rem));
+  width: min(1180px, calc(100% - 3rem));
 }
 
 .project-explorer {
   display: grid;
-  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
-  min-height: 680px;
+  grid-template-columns: minmax(240px, 300px) minmax(0, 1fr);
+  min-height: 620px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
 }
@@ -754,7 +754,7 @@ a:hover {
 
 .project-preview {
   min-width: 0;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
 }
 
 .project-preview-topline {
@@ -770,8 +770,8 @@ a:hover {
 
 .project-preview-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(420px, 0.85fr);
-  gap: var(--spacing-xl);
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.78fr);
+  gap: var(--spacing-lg);
   align-items: start;
 }
 
