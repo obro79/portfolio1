@@ -721,10 +721,12 @@ a:hover {
 
 .project-file {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  gap: var(--spacing-sm);
-  padding: 12px var(--spacing-md);
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) max-content;
+  align-items: center;
+  column-gap: var(--spacing-xs);
+  min-height: 44px;
+  padding: 8px 10px;
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-dim);
@@ -736,6 +738,11 @@ a:hover {
   transition: all 0.2s ease;
 }
 
+.project-file::before {
+  content: '';
+  color: var(--accent);
+}
+
 .project-file:hover,
 .project-file.active {
   border-color: var(--accent);
@@ -744,12 +751,20 @@ a:hover {
 }
 
 .project-file.active::before {
-  content: '> ';
-  color: var(--accent);
+  content: '>';
+}
+
+.project-file span:first-of-type {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .project-file-meta {
   color: var(--text-muted);
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 .project-preview {
@@ -1408,7 +1423,7 @@ a:hover {
   }
 
   .project-file-meta {
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .project-preview-copy h3 {
@@ -1470,16 +1485,6 @@ a:hover {
   .projects-container,
   .container {
     width: 100%;
-  }
-
-  .project-file {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .project-file.active::before {
-    content: '';
   }
 
   .market-grid {
