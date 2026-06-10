@@ -1,7 +1,7 @@
 {
-  "name": "untitled9",
+  "name": "portfolio-website",
   "version": "1.0.0",
-  "description": "",
+  "description": "Terminal portfolio — https://owenfisher.vercel.app",
   "main": "public/assets/main.js",
   "scripts": {
     "dev": "next dev",

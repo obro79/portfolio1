@@ -1,5 +1,26 @@
-import { useEffect, useState } from 'react';
-import { Project, projectCategories } from '../../data/projects';
+import { useState } from 'react';
+import { Project, projectCategories, projects } from '../../data/projects';
+import ProjectVisual from './ProjectVisual';
+
+const NAV_LINKS = [
+  { href: '#about', label: 'about' },
+  { href: '#experience', label: 'experience' },
+  { href: '#projects', label: 'projects' },
+  { href: '#contributions', label: 'activity' },
+  { href: '#contact', label: 'contact' },
+] as const;
+
+function smoothScrollTo(e: React.MouseEvent<HTMLAnchorElement>) {
+  e.preventDefault();
+  const targetId = e.currentTarget.getAttribute('href');
+  if (!targetId) return;
+  const target = document.querySelector(targetId);
+  if (!target) return;
+  const header = document.querySelector('.site-header') as HTMLElement | null;
+  const headerHeight = header?.offsetHeight ?? 0;
+  const offset = target.getBoundingClientRect().top + window.scrollY - headerHeight - 12;
+  window.scrollTo({ top: offset, behavior: 'smooth' });
+}
 
 const ASCII_NAME = `
  ██████╗ ██╗    ██╗███████╗███╗   ██╗    ███████╗██╗███████╗██╗  ██╗███████╗██████╗
@@ -31,12 +52,6 @@ const experiences: Experience[] = [
     ]
   },
   {
-    period: 'Jan. 2025 — Mar. 2025',
-    company: 'Quantico Research',
-    role: 'Software Engineer',
-    description: 'Provisioned Terraform-managed AWS infrastructure, built Python/NumPy risk-signal pipelines, and automated walk-forward validation and stress testing with Pytest inside CI.'
-  },
-  {
     period: 'June 2025 — Present',
     company: 'UBC Science Undergraduate Society',
     role: 'Frontend Developer',
@@ -47,8 +62,16 @@ const experiences: Experience[] = [
     company: 'UBC Actuarial Science Club',
     role: 'Frontend Engineer',
     description: 'Led the club website build and shipped event/member surfaces in Next.js, React, and Tailwind CSS.'
+  },
+  {
+    period: 'Jan. 2025 — Mar. 2025',
+    company: 'Quantico Research',
+    role: 'Software Engineer',
+    description: 'Provisioned Terraform-managed AWS infrastructure, built Python/NumPy risk-signal pipelines, and automated walk-forward validation and stress testing with Pytest inside CI.'
   }
 ];
+
+const highlightedProjects = projects.filter((project) => project.categories.includes('highlighted'));
 
 type FilterType = typeof projectCategories[number];
 
@@ -68,18 +91,38 @@ interface ContactSectionProps {
 }
 
 export function SiteHeader() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    smoothScrollTo(e);
+    setMenuOpen(false);
+  };
+
   return (
     <header className="site-header">
       <div className="container">
         <div className="header-content">
-          <span className="logo">owen_fisher</span>
-          <nav>
-            <ul className="nav-links">
-              <li><a href="#about">about</a></li>
-              <li><a href="#experience">experience</a></li>
-              <li><a href="#projects">projects</a></li>
-              <li><a href="#contact">contact</a></li>
+          <a href="#about" className="logo" onClick={handleNavClick}>owen_fisher</a>
+          <nav className="site-nav" aria-label="Primary">
+            <ul id="site-nav-menu" className={`nav-links ${menuOpen ? 'is-open' : ''}`}>
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} onClick={handleNavClick}>{link.label}</a>
+                </li>
+              ))}
             </ul>
+            <button
+              type="button"
+              className={`mobile-nav-toggle ${menuOpen ? 'is-open' : ''}`}
+              aria-expanded={menuOpen}
+              aria-controls="site-nav-menu"
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
           </nav>
         </div>
       </div>
@@ -87,7 +130,11 @@ export function SiteHeader() {
   );
 }
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onTryTerminal?: () => void;
+}
+
+export function HeroSection({ onTryTerminal }: HeroSectionProps) {
   return (
     <section className="hero" id="about">
       <div className="container">
@@ -123,6 +170,11 @@ export function HeroSection() {
           <div className="hero-actions">
             <a href="#projects" className="btn btn-primary">View Projects</a>
             <a href="#contact" className="btn">Get in touch</a>
+            {onTryTerminal && (
+              <button type="button" className="btn btn-ghost" onClick={onTryTerminal}>
+                Try terminal mode →
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -159,6 +211,65 @@ export function ExperienceSection() {
               )}
             </article>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function projectPrimaryLink(project: Project): { href: string; label: string } | null {
+  if (project.links.demo) return { href: project.links.demo, label: 'live demo' };
+  if (project.links.github) return { href: project.links.github, label: 'view source' };
+  if (project.links.devpost) return { href: project.links.devpost, label: 'devpost' };
+  if (project.links.video) return { href: project.links.video, label: 'video' };
+  return null;
+}
+
+export function FeaturedProjectsSection({
+  onProjectSelect,
+}: {
+  onProjectSelect: (projectId: string) => void;
+}) {
+  return (
+    <section className="section featured-projects-section" aria-label="Highlighted projects">
+      <div className="container">
+        <div className="section-header fade-in-section">
+          <p className="section-command">head -n 5 projects/*</p>
+          <h2 className="section-title">Highlighted work</h2>
+        </div>
+        <div className="featured-projects-row fade-in-section">
+          {highlightedProjects.map((project) => {
+            const primary = projectPrimaryLink(project);
+            return (
+              <article key={project.id} className="featured-project-card">
+                <p className="featured-project-meta">{project.year} · {project.role}</p>
+                <h3>{project.title}</h3>
+                <p>{project.description}</p>
+                <div className="featured-project-actions">
+                  <button
+                    type="button"
+                    className="featured-project-select"
+                    onClick={() => {
+                      onProjectSelect(project.id);
+                      const target = document.querySelector('#projects');
+                      if (target) {
+                        const header = document.querySelector('.site-header') as HTMLElement | null;
+                        const offset = target.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight ?? 0) - 12;
+                        window.scrollTo({ top: offset, behavior: 'smooth' });
+                      }
+                    }}
+                  >
+                    explore
+                  </button>
+                  {primary && (
+                    <a href={primary.href} target="_blank" rel="noopener noreferrer" className="featured-project-link">
+                      {primary.label}
+                    </a>
+                  )}
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -217,6 +328,8 @@ export function ProjectsSection({
               <span>{selectedProject.year}</span>
             </div>
 
+            <ProjectVisual project={selectedProject} />
+
             <div className="project-preview-copy">
               <p className="eyebrow">{selectedProject.role}</p>
               <h3>{selectedProject.title}</h3>
@@ -255,25 +368,25 @@ function ProjectActions({
 }) {
   return (
     <div className="project-links project-actions">
-      {project.stackblitz && (
-        <button className="project-link" onClick={() => onOpenSandbox(project)}>
-          open sandbox
-        </button>
-      )}
-      {project.terminalDemo && onTerminalDemo && (
-        <button className="project-link" onClick={() => onTerminalDemo(project.terminalDemo!)}>
-          run demo
-        </button>
+      {project.links.demo && (
+        <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="project-link project-link-primary">
+          live demo
+        </a>
       )}
       {project.links.github && (
         <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="project-link">
           view source
         </a>
       )}
-      {project.links.demo && (
-        <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="project-link">
-          live demo
-        </a>
+      {project.terminalDemo && onTerminalDemo && (
+        <button type="button" className="project-link" onClick={() => onTerminalDemo(project.terminalDemo!)}>
+          run demo
+        </button>
+      )}
+      {project.stackblitz && (
+        <button type="button" className="project-link" onClick={() => onOpenSandbox(project)}>
+          open sandbox
+        </button>
       )}
       {project.links.devpost && (
         <a href={project.links.devpost} target="_blank" rel="noopener noreferrer" className="project-link">
@@ -325,6 +438,11 @@ export function ContactSection({ copied, onCopyEmail }: ContactSectionProps) {
             <li>
               <a href="https://devpost.com/obro79" target="_blank" rel="noopener noreferrer">
                 Devpost
+              </a>
+            </li>
+            <li>
+              <a href="https://medium.com/@owenfisher46" target="_blank" rel="noopener noreferrer">
+                Medium
               </a>
             </li>
           </ul>

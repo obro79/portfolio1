@@ -142,10 +142,7 @@ EXPERIENCE
     risk-signal pipelines, and automated model validation in CI.
 
 SELECTED PROJECTS
-  Flux        FastAPI + Kafka + Postgres + Redis market data pipeline
-  Cortex      Python backend spine for knowledge infrastructure
-  Tower       FastAPI + SQLite + TypeScript local-network file discovery
-  MaintainerOS GitHub issue routing and PR verification workflow
+${projects.map((project) => `  ${project.title.padEnd(14)}${project.description.slice(0, 52)}`).join('\n')}
 
 SKILLS
   Python, TypeScript, Java, C++, SQL, Bash

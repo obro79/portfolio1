@@ -9,16 +9,18 @@ export default function ModeToggle({ mode, onModeChange }: ModeToggleProps) {
       <button
         className={mode === 'standard' ? 'active' : ''}
         onClick={() => onModeChange('standard')}
-        aria-label="Switch to standard view"
+        title="Portfolio view — projects, experience, contact"
+        aria-label="Switch to portfolio view"
       >
-        GUI
+        Portfolio
       </button>
       <button
         className={mode === 'terminal' ? 'active' : ''}
         onClick={() => onModeChange('terminal')}
+        title="Terminal view — interactive CLI"
         aria-label="Switch to terminal view"
       >
-        &gt;_
+        Terminal
       </button>
     </div>
   );

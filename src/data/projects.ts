@@ -56,6 +56,8 @@ export const projects: Project[] = [
     visual: {
       type: 'terminal',
       title: 'service trace',
+      image: '/projects/flux-metrics.svg',
+      imageAlt: 'Flux pipeline metrics and observability',
       lines: [
         '$ docker compose up kafka postgres redis api workers',
         '[adapters] coinbase connected; kraken connected',
@@ -89,6 +91,8 @@ export const projects: Project[] = [
     visual: {
       type: 'terminal',
       title: 'local validation',
+      image: '/projects/cortex-cli.svg',
+      imageAlt: 'Cortex CLI validation output',
       lines: [
         '$ cortex doctor',
         'config: ok',
@@ -100,7 +104,8 @@ export const projects: Project[] = [
     },
     links: {
       github: 'https://github.com/obro79/cortex'
-    }
+    },
+    terminalDemo: 'run cortex'
   },
   {
     id: 'tower',
@@ -120,7 +125,7 @@ export const projects: Project[] = [
     visual: {
       type: 'architecture',
       title: 'transfer model',
-      image: '/projects/tower-devpost.png',
+      image: '/projects/tower-devpost.svg',
       imageAlt: 'Tower Devpost project thumbnail',
       lines: [
         'Device A CLI -> FastAPI registry -> SQLite metadata',
@@ -152,12 +157,12 @@ export const projects: Project[] = [
     visual: {
       type: 'architecture',
       title: 'trust boundary',
-      image: '/projects/maintaineros-home.png',
+      image: '/projects/maintaineros-home.svg',
       imageAlt: 'MaintainerOS homepage screenshot',
       media: [
-        { src: '/projects/maintaineros-home.png', title: 'home', alt: 'MaintainerOS homepage screenshot' },
-        { src: '/projects/maintaineros-connect.png', title: 'connect', alt: 'MaintainerOS GitHub connect screenshot' },
-        { src: '/projects/maintaineros-docs.png', title: 'docs', alt: 'MaintainerOS docs screenshot' }
+        { src: '/projects/maintaineros-home.svg', title: 'home', alt: 'MaintainerOS homepage screenshot' },
+        { src: '/projects/maintaineros-connect.svg', title: 'connect', alt: 'MaintainerOS GitHub connect screenshot' },
+        { src: '/projects/maintaineros-docs.svg', title: 'docs', alt: 'MaintainerOS docs screenshot' }
       ],
       lines: [
         'issue -> route -> context pack',
@@ -189,12 +194,12 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'application pipeline',
-      image: '/projects/recruit-dashboard.png',
+      image: '/projects/recruit-dashboard.svg',
       imageAlt: 'Recruit dashboard screenshot',
       media: [
-        { src: '/projects/recruit-dashboard.png', title: 'dashboard', alt: 'Recruit dashboard screenshot' },
-        { src: '/projects/recruit-queue.png', title: 'queue', alt: 'Recruit applications queue screenshot' },
-        { src: '/projects/recruit-architecture.png', title: 'system', alt: 'Recruit system architecture diagram' }
+        { src: '/projects/recruit-dashboard.svg', title: 'dashboard', alt: 'Recruit dashboard screenshot' },
+        { src: '/projects/recruit-queue.svg', title: 'queue', alt: 'Recruit applications queue screenshot' },
+        { src: '/projects/recruit-architecture.svg', title: 'system', alt: 'Recruit system architecture diagram' }
       ],
       lines: [
         'ingest ats_feeds --limit 500',
@@ -208,7 +213,8 @@ export const projects: Project[] = [
       github: 'https://github.com/obro79/recruit',
       demo: 'https://recruit-main-beryl.vercel.app',
       devpost: 'https://devpost.com/software/recruit-h3lc2r'
-    }
+    },
+    terminalDemo: 'run recruit'
   },
   {
     id: 'rehabify',
@@ -228,11 +234,11 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'live coaching loop',
-      image: '/projects/rehabify-landing.png',
+      image: '/projects/rehabify-landing.svg',
       imageAlt: 'Rehabify landing page screenshot',
       media: [
-        { src: '/projects/rehabify-landing.png', title: 'landing', alt: 'Rehabify landing page screenshot' },
-        { src: '/projects/rehabify-demo.webp', title: 'demo', alt: 'Rehabify exercise demo image' }
+        { src: '/projects/rehabify-landing.svg', title: 'landing', alt: 'Rehabify landing page screenshot' },
+        { src: '/projects/rehabify-demo.svg', title: 'demo', alt: 'Rehabify exercise demo image' }
       ],
       lines: [
         'camera frame -> pose landmarks',
@@ -265,6 +271,8 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'pricing workflow',
+      image: '/projects/option-pricing-ui.svg',
+      imageAlt: 'Option Strategy App Streamlit dashboard',
       lines: [
         'input underlying / strike / vol / expiry',
         'compute Black-Scholes + Monte Carlo scenarios',
@@ -295,7 +303,7 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'voice deployment flow',
-      image: '/projects/echome-devpost.png',
+      image: '/projects/echome-devpost.svg',
       imageAlt: 'EchoMe Devpost project thumbnail',
       lines: [
         'speak app idea',
@@ -333,6 +341,8 @@ export const projects: Project[] = [
     visual: {
       type: 'product',
       title: 'voice session state',
+      image: '/projects/prepme-ui.svg',
+      imageAlt: 'PrepMe interview session UI',
       lines: [
         'idle -> connecting -> live call',
         'audio stream -> transcript',

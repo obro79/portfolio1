@@ -57,6 +57,7 @@ Try these:
   run flux          Launch a live data pipeline demo
   neofetch          System info, terminal-style
 
+Switch to Portfolio view (top right) for projects, experience, and contact.
 Type 'help' for the full command list.
 `;
 
@@ -96,7 +97,8 @@ const HELP_TEXT = `
 COOL STUFF
   projects         Browse project files           open <project>   Select project
   code <project>   Open source sandbox            demo <project>   Run scripted demo
-  run flux         Live pipeline demo             neofetch         System info
+  run flux         Live pipeline demo             run cortex       Backend validation trace
+  run recruit      Application pipeline trace     neofetch         System info
   theme <name>     Switch theme                   git log          GitHub activity
 
 NAVIGATE                                         PORTFOLIO
@@ -927,6 +929,28 @@ Pro tip: Never run 'rm -rf /' on a real system.
       }
 
       case 'run': {
+        if (args[0] === 'cortex' || args[0] === 'recruit') {
+          const demoProject = findProject(args[0]);
+          if (!demoProject) {
+            addLine('error', `run: project '${args[0]}' not found`);
+            break;
+          }
+          setSelectedProjectId(demoProject.id);
+          addLine('ascii', `
+  ╔═══════════════════════════════════════╗
+  ║          ${demoProject.title.toUpperCase().padEnd(27)}║
+  ╚═══════════════════════════════════════╝`);
+          demoProject.visual.lines.forEach((line, index) => {
+            setTimeout(() => addLine('output', line), (index + 1) * 350);
+          });
+          setTimeout(() => {
+            if (demoProject.links.github) {
+              addLine('output', `\n  GitHub: ${demoProject.links.github}`);
+            }
+          }, (demoProject.visual.lines.length + 1) * 350);
+          break;
+        }
+
         if (args[0] === 'flux') {
           setSelectedProjectId('flux');
           // Flux pipeline demo
@@ -962,9 +986,9 @@ Pro tip: Never run 'rm -rf /' on a real system.
             if (!fluxDemoRef.current) fluxDemoRef.current = t;
           });
         } else if (args[0]) {
-          addLine('error', `run: unknown target '${args[0]}'. Try: run flux`);
+          addLine('error', `run: unknown target '${args[0]}'. Try: run flux, run cortex, run recruit`);
         } else {
-          addLine('error', 'run: missing target. Try: run flux');
+          addLine('error', 'run: missing target. Try: run flux, run cortex, run recruit');
         }
         break;
       }

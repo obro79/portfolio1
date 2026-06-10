@@ -6,6 +6,7 @@ import MarketTicker from './MarketTicker';
 import {
   ContactSection,
   ExperienceSection,
+  FeaturedProjectsSection,
   HeroSection,
   ProjectsSection,
   SiteFooter,
@@ -18,9 +19,10 @@ type FilterType = typeof projectCategories[number];
 
 interface StandardViewProps {
   onTerminalDemo?: (command: string) => void;
+  onTryTerminal?: () => void;
 }
 
-export default function StandardView({ onTerminalDemo }: StandardViewProps) {
+export default function StandardView({ onTerminalDemo, onTryTerminal }: StandardViewProps) {
   const [filter, setFilter] = useState<FilterType>('all');
   const [selectedProjectId, setSelectedProjectId] = useState(projects[0]?.id || '');
   const [sandboxProject, setSandboxProject] = useState<Project | null>(null);
@@ -82,8 +84,9 @@ export default function StandardView({ onTerminalDemo }: StandardViewProps) {
     <div className="standard-view">
       <SiteHeader />
       <main>
-        <HeroSection />
+        <HeroSection onTryTerminal={onTryTerminal} />
         <ExperienceSection />
+        <FeaturedProjectsSection onProjectSelect={setSelectedProjectId} />
         <ProjectsSection
           filter={filter}
           filteredProjects={filteredProjects}
