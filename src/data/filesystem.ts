@@ -18,7 +18,7 @@ const experienceContent = `┌────────────────�
   - Backend engineering in Python.
 
 [2025-09 -> 2026-05] Royal Bank of Canada
-  Role: Software Engineer
+  Role: Quantitative Developer (Internship)
   - Migrated legacy MATLAB factor-scoring pipeline to Python/PySpark
     on Databricks, cutting single-factor backfills from 3.25 hours to
     under 1 minute for a 250x+ speedup across 30+ years of financial
@@ -131,8 +131,8 @@ EXPERIENCE
     Building agentic AI workflows with LangChain and backend systems
     in Python. San Mateo, California.
 
-  Royal Bank of Canada — Software Engineer          Sep 2025 - May 2026
-    Migrated MATLAB factor-scoring to Python/PySpark on Databricks,
+  Royal Bank of Canada — Quantitative Developer     Sep 2025 - May 2026
+    (Internship). Migrated MATLAB factor-scoring to Python/PySpark on Databricks,
     reducing single-factor backfills from 3.25 hours to under 1 minute
     for a 250x+ speedup across 30+ years of financial time-series data.
 

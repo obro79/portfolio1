@@ -56,7 +56,8 @@ const experiences: Experience[] = [
   {
     period: 'Sep. 2025 — May 2026',
     company: 'Royal Bank of Canada',
-    role: 'Software Engineer',
+    logo: '/companies/rbc.png',
+    role: 'Quantitative Developer · Internship',
     bullets: [
       'Migrated legacy MATLAB factor-scoring pipeline to Python/PySpark on Databricks, cutting single-factor backfills from 3.25 hours to under 1 minute for a 250x+ speedup across 30+ years of financial time-series data.',
       'Owned Python POC rebuild of legacy MATLAB batch preprocessing pipeline, preserving backward-compatible file outputs while adding caching and multithreading to make daily runs more reliable and 15-20x faster.',
