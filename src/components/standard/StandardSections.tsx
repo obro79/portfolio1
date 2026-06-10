@@ -35,11 +35,24 @@ type Experience = {
   period: string;
   company: string;
   role: string;
+  logo?: string;
+  location?: string;
   description?: string;
   bullets?: string[];
 };
 
 const experiences: Experience[] = [
+  {
+    period: 'Jun. 2026 — Present',
+    company: 'Sendbird',
+    logo: '/companies/sendbird.png',
+    role: 'AI Engineer · Internship',
+    location: 'San Mateo, California, United States',
+    bullets: [
+      'Building agentic AI workflows with LangChain.',
+      'Backend engineering in Python.'
+    ]
+  },
   {
     period: 'Sep. 2025 — May 2026',
     company: 'Royal Bank of Canada',
@@ -193,9 +206,15 @@ export function ExperienceSection() {
           {experiences.map((exp) => (
             <article key={`${exp.company}-${exp.period}`} className="experience-item fade-in-section">
               <div className="experience-header">
-                <div>
-                  <span className="experience-timestamp">{exp.period}</span>
-                  <span className="experience-company"> {exp.company}</span>
+                <div className="experience-title">
+                  {exp.logo ? (
+                    <img src={exp.logo} alt={`${exp.company} logo`} className="experience-logo" width={28} height={28} />
+                  ) : null}
+                  <div>
+                    <span className="experience-timestamp">{exp.period}</span>
+                    <span className="experience-company"> {exp.company}</span>
+                    {exp.location ? <p className="experience-location">{exp.location}</p> : null}
+                  </div>
                 </div>
                 <span className="experience-role">{exp.role}</span>
               </div>

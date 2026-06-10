@@ -11,6 +11,12 @@ const experienceContent = `┌────────────────�
 │                     EXPERIENCE LOG                          │
 └─────────────────────────────────────────────────────────────┘
 
+[2026-06 -> present] Sendbird
+  Role: AI Engineer (Internship)
+  Location: San Mateo, California, United States
+  - Building agentic AI workflows with LangChain.
+  - Backend engineering in Python.
+
 [2025-09 -> 2026-05] Royal Bank of Canada
   Role: Software Engineer
   - Migrated legacy MATLAB factor-scoring pipeline to Python/PySpark
@@ -121,6 +127,10 @@ EDUCATION
   B.Sc. Computer Science, Minor in Mathematics      Expected May 2027
 
 EXPERIENCE
+  Sendbird — AI Engineer (Internship)               Jun 2026 - Present
+    Building agentic AI workflows with LangChain and backend systems
+    in Python. San Mateo, California.
+
   Royal Bank of Canada — Software Engineer          Sep 2025 - May 2026
     Migrated MATLAB factor-scoring to Python/PySpark on Databricks,
     reducing single-factor backfills from 3.25 hours to under 1 minute
