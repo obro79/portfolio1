@@ -90,8 +90,24 @@ export default function GitHubContributions() {
                 {data ? data.total.toLocaleString() : '...'} contributions
               </p>
               <p className="contrib-meta">
-                github.com/{data?.username || 'obro79'} · {data?.period || 'loading latest calendar'}
+                <a
+                  href={`https://github.com/${data?.username || 'obro79'}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contrib-github-link"
+                >
+                  github.com/{data?.username || 'obro79'}
+                </a>
+                {' · '}{data?.period || 'loading latest calendar'}
               </p>
+              <a
+                href="https://owenfisher.dev/Owen_Fisher_Resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contrib-resume-link"
+              >
+                view resume →
+              </a>
             </div>
             <div className="contrib-live">
               <span className={`status-dot ${data && !error ? 'live' : ''}`} />
