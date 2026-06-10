@@ -100,14 +100,6 @@ export default function GitHubContributions() {
                 </a>
                 {' · '}{data?.period || 'loading latest calendar'}
               </p>
-              <a
-                href="https://owenfisher.dev/Owen_Fisher_Resume.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="contrib-resume-link"
-              >
-                view resume →
-              </a>
             </div>
             <div className="contrib-live">
               <span className={`status-dot ${data && !error ? 'live' : ''}`} />
