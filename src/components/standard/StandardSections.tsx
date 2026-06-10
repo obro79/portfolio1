@@ -71,7 +71,6 @@ const experiences: Experience[] = [
   }
 ];
 
-const highlightedProjects = projects.filter((project) => project.categories.includes('highlighted'));
 
 type FilterType = typeof projectCategories[number];
 
@@ -211,65 +210,6 @@ export function ExperienceSection() {
               )}
             </article>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function projectPrimaryLink(project: Project): { href: string; label: string } | null {
-  if (project.links.demo) return { href: project.links.demo, label: 'live demo' };
-  if (project.links.github) return { href: project.links.github, label: 'view source' };
-  if (project.links.devpost) return { href: project.links.devpost, label: 'devpost' };
-  if (project.links.video) return { href: project.links.video, label: 'video' };
-  return null;
-}
-
-export function FeaturedProjectsSection({
-  onProjectSelect,
-}: {
-  onProjectSelect: (projectId: string) => void;
-}) {
-  return (
-    <section className="section featured-projects-section" aria-label="Highlighted projects">
-      <div className="container">
-        <div className="section-header fade-in-section">
-          <p className="section-command">head -n 5 projects/*</p>
-          <h2 className="section-title">Highlighted work</h2>
-        </div>
-        <div className="featured-projects-row fade-in-section">
-          {highlightedProjects.map((project) => {
-            const primary = projectPrimaryLink(project);
-            return (
-              <article key={project.id} className="featured-project-card">
-                <p className="featured-project-meta">{project.year} · {project.role}</p>
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <div className="featured-project-actions">
-                  <button
-                    type="button"
-                    className="featured-project-select"
-                    onClick={() => {
-                      onProjectSelect(project.id);
-                      const target = document.querySelector('#projects');
-                      if (target) {
-                        const header = document.querySelector('.site-header') as HTMLElement | null;
-                        const offset = target.getBoundingClientRect().top + window.scrollY - (header?.offsetHeight ?? 0) - 12;
-                        window.scrollTo({ top: offset, behavior: 'smooth' });
-                      }
-                    }}
-                  >
-                    explore
-                  </button>
-                  {primary && (
-                    <a href={primary.href} target="_blank" rel="noopener noreferrer" className="featured-project-link">
-                      {primary.label}
-                    </a>
-                  )}
-                </div>
-              </article>
-            );
-          })}
         </div>
       </div>
     </section>

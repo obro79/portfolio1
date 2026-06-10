@@ -756,64 +756,6 @@ a:hover {
   width: min(1080px, calc(100% - 2rem));
 }
 
-.featured-projects-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-xl);
-}
-
-.featured-project-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  min-height: 100%;
-}
-
-.featured-project-meta {
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.featured-project-card h3 {
-  color: var(--text);
-  font-size: 1.1rem;
-}
-
-.featured-project-card > p {
-  color: var(--text-dim);
-  font-size: 13px;
-  line-height: 1.6;
-  flex: 1;
-}
-
-.featured-project-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-sm);
-}
-
-.featured-project-select,
-.featured-project-link {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent);
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.featured-project-link:hover,
-.featured-project-select:hover {
-  color: var(--text);
-  text-decoration: underline;
-}
-
 .project-visual {
   margin-bottom: var(--spacing-lg);
 }

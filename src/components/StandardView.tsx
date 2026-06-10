@@ -6,7 +6,6 @@ import MarketTicker from './MarketTicker';
 import {
   ContactSection,
   ExperienceSection,
-  FeaturedProjectsSection,
   HeroSection,
   ProjectsSection,
   SiteFooter,
@@ -86,7 +85,6 @@ export default function StandardView({ onTerminalDemo, onTryTerminal }: Standard
       <main>
         <HeroSection onTryTerminal={onTryTerminal} />
         <ExperienceSection />
-        <FeaturedProjectsSection onProjectSelect={setSelectedProjectId} />
         <ProjectsSection
           filter={filter}
           filteredProjects={filteredProjects}
