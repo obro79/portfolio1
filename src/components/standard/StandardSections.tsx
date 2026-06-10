@@ -56,7 +56,7 @@ const experiences: Experience[] = [
   {
     period: 'Sep. 2025 — May 2026',
     company: 'Royal Bank of Canada',
-    logo: '/companies/rbc.png',
+    logo: '/companies/rbc.svg',
     role: 'Quantitative Developer · Internship',
     bullets: [
       'Migrated legacy MATLAB factor-scoring pipeline to Python/PySpark on Databricks, cutting single-factor backfills from 3.25 hours to under 1 minute for a 250x+ speedup across 30+ years of financial time-series data.',
@@ -209,7 +209,7 @@ export function ExperienceSection() {
               <div className="experience-header">
                 <div className="experience-title">
                   {exp.logo ? (
-                    <img src={exp.logo} alt={`${exp.company} logo`} className="experience-logo" width={28} height={28} />
+                    <img src={exp.logo} alt={`${exp.company} logo`} className="experience-logo" width={32} height={32} />
                   ) : null}
                   <div>
                     <span className="experience-timestamp">{exp.period}</span>

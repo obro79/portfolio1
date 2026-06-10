@@ -715,11 +715,10 @@ a:hover {
 
 .experience-logo {
   flex-shrink: 0;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 4px;
   object-fit: contain;
-  background: #fff;
 }
 
 .experience-location {
