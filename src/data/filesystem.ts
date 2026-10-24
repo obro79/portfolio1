@@ -61,21 +61,25 @@ const aboutContent = `┌──────────────────�
 └─────────────────────────────────────────────────────────────┘
 
 Name:       Owen Fisher
-Role:       Backend Engineer
+Role:       Backend & Infrastructure Engineer
 Location:   Vancouver, BC, Canada
-Education:  University of British Columbia
+Education:  UBC Computer Science, Class of 2027
 
-I build Python services, data pipelines, and production-minded
-infrastructure. Recent work spans FastAPI services, Kafka consumers,
-Postgres/Redis data paths, Databricks migrations, AWS infrastructure,
-Dockerized local stacks, CI validation, and observability.
+I build backend systems that hold up in production, and I ship
+products fast when the clock is running. AI engineering intern at
+Sendbird, previously a quant developer at RBC, and 3x hackathon
+1st place (nwHacks 2026, HackTech 2026 YC track, Cursor AI
+Hackathon).
+
+Right now I'm going deeper on real-time ML systems, stream
+processing, and AI agents that are safe to leave running.
 
 Skills:
 ├── Languages: Python, TypeScript, Java, C++, SQL, Bash
 ├── Backend: FastAPI, Kafka, PostgreSQL, Redis, Pydantic, Pytest
 ├── Data: PySpark, Databricks, NumPy, Pandas, Delta/Parquet
 ├── Infra: AWS, Docker, Terraform, GitHub Actions, Vercel
-└── Focus: Backend systems, data infrastructure, reliability
+└── Focus: Real-time ML systems, stream processing, AI agents
 
 Contact:
 ├── Email: owenfisher46@gmail.com
@@ -105,8 +109,8 @@ const contactContent = `┌─────────────────�
 │                       CONTACT                               │
 └─────────────────────────────────────────────────────────────┘
 
-Open to backend, infrastructure, Python, data platform, and automation
-work.
+Open to backend, infrastructure, real-time ML, and AI-agent roles,
+and always happy to talk with founders building in those spaces.
 
 Email:    owenfisher46@gmail.com
 GitHub:   github.com/obro79
@@ -159,6 +163,11 @@ EXPERIENCE
   UBC Actuarial Science Club — Frontend Engineer    May 2025 - Present
     - Led the club website build and shipped event/member surfaces in
       Next.js, React, and Tailwind CSS.
+
+HACKATHON WINS
+  nwHacks 2026         1st Overall                  Rehabify
+  HackTech 2026        1st YC track, 3rd Sideshift  Recruit
+  Cursor AI Hackathon  1st Overall, 1st Clustly     MaintainerOS
 
 SELECTED PROJECTS
 ${projects.map((project) => `  ${project.title.padEnd(14)}${project.description.slice(0, 52)}`).join('\n')}
@@ -221,7 +230,8 @@ projects.forEach(project => {
 ├${border}┤
 │ ${`Role: ${project.role}`.padEnd(BOX_WIDTH - 2)} │
 │ ${`Year: ${project.year}`.padEnd(BOX_WIDTH - 2)} │
-│ ${`Tags: ${project.categories.join(', ')}`.padEnd(BOX_WIDTH - 2)} │
+${project.award ? `│ ${truncate(`Award: ${project.award}`, BOX_WIDTH - 2).padEnd(BOX_WIDTH - 2)} │
+` : ''}│ ${`Tags: ${project.categories.join(', ')}`.padEnd(BOX_WIDTH - 2)} │
 ├${border}┤
 ${descLines.map(line => `│ ${line.padEnd(BOX_WIDTH - 2)} │`).join('\n')}
 ├${border}┤

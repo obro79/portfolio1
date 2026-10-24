@@ -31,6 +31,16 @@ const ASCII_NAME = `
  ╚═════╝  ╚══╝╚══╝ ╚══════╝╚═╝  ╚═══╝    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
 `;
 
+const HERO_META = [
+  { key: 'now', value: 'AI Engineer intern @ Sendbird' },
+  { key: 'before', value: 'Quant Developer intern @ RBC (250x faster factor backfills)' },
+  { key: 'wins', value: '1st nwHacks 2026 · 1st YC track, HackTech 2026 · 1st Cursor AI Hackathon' },
+  { key: 'focus', value: 'real-time ML systems, stream processing, AI agents' },
+  { key: 'stack', value: 'Python, FastAPI, Kafka, Postgres, Redis, PySpark, AWS' },
+  { key: 'education', value: 'UBC Computer Science, Class of 2027' },
+  { key: 'location', value: 'Vancouver, BC, Canada' },
+] as const;
+
 type Experience = {
   period: string;
   company: string;
@@ -164,28 +174,18 @@ export function HeroSection({ onTryTerminal }: HeroSectionProps) {
             <span className="user">visitor</span>@<span className="path">owenfisher.dev</span>:~$ whoami
           </p>
           <h1 className="hero-title">
-            Backend Engineer<span className="cursor"></span>
+            Backend &amp; Infrastructure Engineer<span className="cursor"></span>
           </h1>
           <p className="hero-subtitle">
-            Building Python services, data pipelines, and reliable infrastructure for production systems.
+            I build real-time data and ML systems that hold up in production, and I ship products fast when the clock is running.
           </p>
           <div className="hero-meta">
-            <div className="hero-meta-item">
-              <span className="key">location:</span>
-              <span className="value">Vancouver, BC, Canada</span>
-            </div>
-            <div className="hero-meta-item">
-              <span className="key">focus:</span>
-              <span className="value">backend engineering, Python, data infrastructure</span>
-            </div>
-            <div className="hero-meta-item">
-              <span className="key">stack:</span>
-              <span className="value">FastAPI, Kafka, Postgres, Redis, Docker, Databricks, AWS</span>
-            </div>
-            <div className="hero-meta-item">
-              <span className="key">education:</span>
-              <span className="value">University of British Columbia</span>
-            </div>
+            {HERO_META.map((item) => (
+              <div key={item.key} className="hero-meta-item">
+                <span className="key">{item.key}:</span>
+                <span className="value">{item.value}</span>
+              </div>
+            ))}
           </div>
           <div className="hero-actions">
             <a href="#projects" className="btn btn-primary">View Projects</a>
@@ -284,7 +284,9 @@ export function ProjectsSection({
                 onClick={() => onProjectSelect(project.id)}
               >
                 <span>{project.slug}</span>
-                <span className="project-file-meta">{project.categories.includes('infra') ? 'infra' : project.categories[0]}</span>
+                <span className={`project-file-meta ${project.award ? 'has-award' : ''}`}>
+                  {project.award ? '★ 1st' : primaryCategory(project)}
+                </span>
               </button>
             ))}
           </aside>
@@ -300,6 +302,9 @@ export function ProjectsSection({
             <div className="project-preview-copy">
               <p className="eyebrow">{selectedProject.role}</p>
               <h3>{selectedProject.title}</h3>
+              {selectedProject.award && (
+                <p className="project-award">★ {selectedProject.award}</p>
+              )}
               <p>{selectedProject.description}</p>
               <div className="project-stack" aria-label={`${selectedProject.title} stack`}>
                 {selectedProject.stack.map((item) => (
@@ -322,6 +327,11 @@ export function ProjectsSection({
       </div>
     </section>
   );
+}
+
+function primaryCategory(project: Project) {
+  if (project.categories.includes('infra')) return 'infra';
+  return project.categories.find((category) => category !== 'highlighted') ?? 'project';
 }
 
 function ProjectActions({
@@ -379,7 +389,7 @@ export function ContactSection({ copied, onCopyEmail }: ContactSectionProps) {
         </div>
         <div className="contact-content fade-in-section">
           <p className="contact-lede">
-            Available for freelance projects and consulting.
+            Open to backend, infrastructure, real-time ML, and AI-agent roles. If you&apos;re a founder building in those spaces, I&apos;d love to hear what you&apos;re working on.
           </p>
           <div className="contact-email">
             <span className="label">mail:</span>
@@ -431,6 +441,7 @@ export function SiteFooter() {
             <a href="#about">Back to top</a>
             <a href="mailto:owenfisher46@gmail.com">Email</a>
             <a href="https://github.com/obro79" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/in/fisherowen" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <a href="https://devpost.com/obro79" target="_blank" rel="noopener noreferrer">Devpost</a>
           </div>
         </div>

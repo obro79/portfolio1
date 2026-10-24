@@ -53,7 +53,7 @@ Welcome to Owen Fisher's interactive terminal portfolio.
 Try these:
   projects          Browse backend and infrastructure work
   open flux         Inspect a project in the TUI preview
-  code prepme       Open source in a StackBlitz sandbox
+  code echome       Open source in a StackBlitz sandbox
   run flux          Launch a live data pipeline demo
   neofetch          System info, terminal-style
 
@@ -721,7 +721,7 @@ Use: open <project>, cat projects/<project>.md, code <project>, demo <project>`)
       .oOOOOOOOo.       Theme:      ${theme}
      oO          Oo     Uptime:     Since Jan 2025
                          ──────────────────────────
-                         Role:       Backend Engineer
+                         Role:       Backend & Infra Engineer
                          Location:   Vancouver, BC
                          Education:  UBC Computer Science
                          ──────────────────────────
@@ -729,7 +729,7 @@ Use: open <project>, cat projects/<project>.md, code <project>, demo <project>`)
                          Backend:    FastAPI, Kafka, Postgres, Redis
                          Infra:      Docker, AWS, Terraform, Databricks
                          Projects:   ${projects.length}
-                         Hackathons: ${hackathonCount}
+                         Hackathons: ${hackathonCount} projects, 3x 1st place
                          ──────────────────────────
                          ████████████████████████
 `);

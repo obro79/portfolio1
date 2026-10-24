@@ -15,3 +15,4 @@ yarn-error.log*
 # Next.js build output
 .next/
 .gstack/
+tsconfig.tsbuildinfo
