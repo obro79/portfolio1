@@ -595,6 +595,8 @@ a:hover {
 
 .hero-meta-item .key {
   color: var(--accent);
+  flex-shrink: 0;
+  min-width: 11ch;
 }
 
 .hero-meta-item .value {
@@ -819,6 +821,7 @@ a:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top;
 }
 
 .project-visual-gallery {
@@ -954,6 +957,21 @@ a:hover {
   font-size: 18px;
   line-height: 1.7;
   margin-bottom: var(--spacing-lg);
+}
+
+.project-file-meta.has-award {
+  color: var(--warning);
+}
+
+.project-preview-copy > p.project-award {
+  display: inline-block;
+  color: var(--warning);
+  border: 1px solid var(--warning);
+  padding: 4px 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-top: calc(-1 * var(--spacing-xs));
+  margin-bottom: var(--spacing-md);
 }
 
 .project-stack {
@@ -1630,6 +1648,10 @@ a:hover {
   .project-preview-copy > p,
   .project-metrics {
     font-size: 14px;
+  }
+
+  .project-preview-copy > p.project-award {
+    font-size: 12px;
   }
 
   .project-preview-topline {
